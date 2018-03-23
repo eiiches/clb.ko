@@ -1,5 +1,5 @@
 # redirector
-Redirect connections transparently to the applications, with zero overhead after establishment.
+Redirect connect(2)ions transparently to the applications, with zero overhead after establishment.
 
 ### Motivation
 
