@@ -1,19 +1,25 @@
 #include <linux/version.h>
 #include <linux/module.h>
+#include <linux/kallsyms.h>
 
 MODULE_LICENSE("GPL");
 
-static int __init init_ip_balancer_module(void)
+// void *sys_call_table[];
+
+static int __init ip_balancer_init(void)
 {
+	unsigned long sys_call_table;
 	printk(KERN_INFO "ip_balancer: init\n");
+	sys_call_table = kallsyms_lookup_name("sys_call_table");
+	printk(KERN_INFO "ip_balancer: located sys_call_table = %px\n", (void *)sys_call_table);
 	return 0;
 }
 
-static void __exit exit_ip_balancer_module(void)
+static void __exit ip_balancer_exit(void)
 {
 	printk(KERN_INFO "ip_balancer: exit\n");
 	return;
 }
 
-module_init(init_ip_balancer_module);
-module_exit(exit_ip_balancer_module);
+module_init(ip_balancer_init);
+module_exit(ip_balancer_exit);
