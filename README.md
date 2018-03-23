@@ -1,6 +1,6 @@
-# redirector.ko
+# ip_balancer.ko
 
-Redirect connect(2)ions transparently to the applications, with zero overhead after establishment.
+Balance connect(2)ions across servers transparently to the application, with zero overhead after establishment.
 
 ### Motivation
 

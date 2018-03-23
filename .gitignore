@@ -1,0 +1,9 @@
+*.sw?
+*~
+*.o
+*.ko
+*.cmd
+*.mod.c
+/.tmp_versions
+/modules.order
+/Module.symvers
