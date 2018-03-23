@@ -39,4 +39,9 @@ $ taskset -c 1 redis-benchmark -h 10.0.0.1 -p 6379 -c 100 -P 1 -t ping -n 100000
 
 #### iptables Performance
 
-TBD
+Client: 192.168.111.11 (without SNAT)
+```
+$ sudo iptables -t nat -A OUTPUT -m statistic --mode random --probability 1.0 -m tcp -p tcp -d 10.0.0.1 --dport 6379 -j DNAT --to-destination 192.168.111.1:6379
+$ taskset -c 1 redis-benchmark -h 10.0.0.1 -p 6379 -c 100 -P 1 -t ping -n 10000000
+^CNG_INLINE: 95377.39
+```
