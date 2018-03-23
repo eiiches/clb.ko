@@ -46,3 +46,7 @@ $ sudo iptables -t nat -A OUTPUT -m statistic --mode random --probability 1.0 -m
 $ taskset -c 1 redis-benchmark -h 10.0.0.1 -p 6379 -c 100 -P 1 -t ping -n 10000000
 ^CNG_INLINE: 95377.39
 ```
+
+### Caveats
+
+ * While `connect(2)` are load-balanced transparently to the application, `getpeername(2)` on the socket will return the real server address, not the virtual one, breaking some transparency.
