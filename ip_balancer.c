@@ -65,6 +65,9 @@ static int ip_balancer_override_sys_call(int sys_call_nr, sys_call_ptr_t sys_cal
 static void ip_balancer_do_balance_v4(struct sockaddr_in *addr)
 {
 	pr_info("do_balance_v4: ip = %pISpc\n", addr);
+	addr->sin_port = htons(6379);
+	addr->sin_addr.s_addr = (1 << 24) + (111 << 16) + (168 << 8) + 192;
+	pr_info("do_balance_v4: ip = %pISpc (after)\n", addr);
 }
 
 
