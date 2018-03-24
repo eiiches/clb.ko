@@ -1,4 +1,4 @@
-# sock_vs.ko
+# connect_lb.ko
 
 Balance connect(2)ions across servers transparently to the application, with zero overhead after establishment.
 

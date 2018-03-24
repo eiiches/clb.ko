@@ -1,8 +1,8 @@
-obj-m := sock_vs.o
+obj-m := connect_lb.o
 ccflags-y := -std=gnu99 -Wno-declaration-after-statement
 BUILD_DIR := /lib/modules/`uname -r`/build
 
-sock_vs.ko: sock_vs.c
+connect_lb.ko: connect_lb.c
 	$(MAKE) -C $(BUILD_DIR) M=$(PWD) modules
 
 .PHONY: clean
