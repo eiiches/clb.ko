@@ -6,7 +6,15 @@
 #include <asm/syscall.h>
 #include <asm/errno.h>
 #include <asm/pgtable.h>
-#include <asm/tlbflush.h>
+#include <linux/security.h>
+#include <linux/audit.h>
+#include <linux/net.h>
+#include <linux/file.h>
+
+// REFERENCES:
+//  * net/socket.c : sys_connect
+//  * fs/file_table.c (include/linux/file.h) : fput
+//  * include/linux/net.h : struct socket
 
 MODULE_LICENSE("GPL");
 
@@ -19,6 +27,13 @@ typedef long (*connect_fn_ptr_t)(int, struct sockaddr __user *, int);
 
 static sys_call_ptr_t *sys_call_table_ptr;
 static connect_fn_ptr_t orig_connect;
+
+#ifdef CONFIG_SECURITY_NETWORK
+static int (*security_socket_connect_fn)(struct socket *sock, struct sockaddr *address, int addrlen);
+static int security_socket_connect_noop(struct socket *sock, struct sockaddr *address, int addrlen) {
+	return 0;
+}
+#endif
 
 
 static int ip_balancer_override_sys_call(int sys_call_nr, sys_call_ptr_t sys_call_fn) {
@@ -48,7 +63,57 @@ static int ip_balancer_override_sys_call(int sys_call_nr, sys_call_ptr_t sys_cal
 asmlinkage long ip_balancer_connect(int fd, struct sockaddr __user *uservaddr, int addrlen)
 {
 	pr_info("connect(%d)\n", fd);
-	return orig_connect(fd, uservaddr, addrlen);
+
+	int err;
+
+	struct socket *sock = sockfd_lookup(fd, &err);
+	if (!sock)
+		goto do_return;
+
+	// Copy address to kernel. For IPv4 or IPv6, addrlen may not be zero.
+	struct sockaddr_storage address;
+	if (addrlen < 0 || addrlen > sizeof(struct sockaddr_storage)) {
+		err = -EINVAL;
+		goto fput_and_return;
+	}
+	if (addrlen != 0) {
+		if (copy_from_user(&address, uservaddr, addrlen)) {
+			err = -EFAULT;
+			goto fput_and_return;
+		}
+		// audit
+		err = audit_sockaddr(addrlen, &address);
+		if (err)
+			goto fput_and_return;
+	}
+
+#ifdef CONFIG_SECURITY_NETWORK
+	// security
+	err = security_socket_connect_fn(sock, (struct sockaddr *) &address, addrlen);
+	if (err)
+		goto fput_and_return;
+#endif
+
+	// If the socket is neither TCP or UDP, use the original connect(2).
+	if (sock->type != SOCK_STREAM && sock->type != SOCK_DGRAM)
+		goto connect;
+	// If the socket is neither IPv4 or IPv6, use the original connect(2).
+	if (sock->ops->family != AF_INET && sock->ops->family != AF_INET6)
+		goto connect;
+
+	// TODO: do actual balancing
+	pr_info("connect(%d): load balanced", fd);
+
+connect:
+	err = sock->ops->connect(sock, (struct sockaddr *) &address, addrlen, sock->file->f_flags);
+
+fput_and_return:
+	fput(sock->file);
+
+do_return:
+	if (err)
+		pr_warn("connect(%d) => %d", fd, err);
+	return err;
 }
 
 
@@ -72,6 +137,14 @@ static int __init ip_balancer_init(void)
 		return -EFAULT;
 	}
 	pr_info("located connect(2) = %px\n", orig_connect);
+
+#ifdef CONFIG_SECURITY_NETWORK
+	security_socket_connect_fn = (void *) kallsyms_lookup_name("security_socket_connect");
+	if (!security_socket_connect_fn) {
+		pr_warn("cloud not locate security_socket_connect() address. security features will be disabled.");
+		security_socket_connect_fn = security_socket_connect_noop;
+	}
+#endif
 
 	return ip_balancer_override_sys_call(__NR_connect, (sys_call_ptr_t) ip_balancer_connect);
 }
