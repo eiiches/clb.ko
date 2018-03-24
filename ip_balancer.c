@@ -10,6 +10,8 @@
 #include <linux/audit.h>
 #include <linux/net.h>
 #include <linux/file.h>
+#include <uapi/linux/in.h>
+#include <uapi/linux/in6.h>
 
 // REFERENCES:
 //  * net/socket.c : sys_connect
@@ -60,10 +62,20 @@ static int ip_balancer_override_sys_call(int sys_call_nr, sys_call_ptr_t sys_cal
 }
 
 
+static void ip_balancer_do_balance_v4(struct sockaddr_in *addr)
+{
+	pr_info("do_balance_v4: ip = %pISpc\n", addr);
+}
+
+
+static void ip_balancer_do_balance_v6(struct sockaddr_in6 *addr)
+{
+	pr_info("do_balance_v6: ip = %pISpc\n", addr);
+}
+
+
 asmlinkage long ip_balancer_connect(int fd, struct sockaddr __user *uservaddr, int addrlen)
 {
-	pr_info("connect(%d)\n", fd);
-
 	int err;
 
 	struct socket *sock = sockfd_lookup(fd, &err);
@@ -94,15 +106,18 @@ asmlinkage long ip_balancer_connect(int fd, struct sockaddr __user *uservaddr, i
 		goto fput_and_return;
 #endif
 
-	// If the socket is neither TCP or UDP, use the original connect(2).
+	// If the socket is neither TCP or UDP, skip to connect.
 	if (sock->type != SOCK_STREAM && sock->type != SOCK_DGRAM)
 		goto connect;
-	// If the socket is neither IPv4 or IPv6, use the original connect(2).
-	if (sock->ops->family != AF_INET && sock->ops->family != AF_INET6)
-		goto connect;
 
-	// TODO: do actual balancing
-	pr_info("connect(%d): load balanced", fd);
+	// Rewrite address. If the socket is neither IPv4 or IPv6, keep the original address.
+	if (sock->ops->family == AF_INET && address.ss_family == AF_INET) {
+		ip_balancer_do_balance_v4((struct sockaddr_in *) &address);
+	} else if (sock->ops->family == AF_INET6 && address.ss_family == AF_INET6) {
+		ip_balancer_do_balance_v6((struct sockaddr_in6 *) &address);
+	} else {
+		goto connect;
+	}
 
 connect:
 	err = sock->ops->connect(sock, (struct sockaddr *) &address, addrlen, sock->file->f_flags);
@@ -111,8 +126,7 @@ fput_and_return:
 	fput(sock->file);
 
 do_return:
-	if (err)
-		pr_warn("connect(%d) => %d", fd, err);
+	pr_info("connect(%d) => %d", fd, err);
 	return err;
 }
 
@@ -126,23 +140,25 @@ static int __init ip_balancer_init(void)
 		pr_err("could not locate sys_call_table, exiting.");
 		return -EFAULT;
 	}
-	pr_info("located sys_call_table = %px\n", sys_call_table_ptr);
+	pr_info("linked sys_call_table => %px\n", sys_call_table_ptr);
 
 	orig_connect = (connect_fn_ptr_t) sys_call_table_ptr[__NR_connect];
 	connect_fn_ptr_t orig_connect_check = (connect_fn_ptr_t) kallsyms_lookup_name("sys_connect");
 	if (orig_connect != orig_connect_check) {
 		pr_err("could not validate connect(2) address, exiting:");
-		pr_err(" * sys_call_table[__NR_connect] == %px\n", orig_connect);
-		pr_err(" * /proc/kallsyms:sys_connect == %px\n", orig_connect_check);
+		pr_err(" * sys_call_table[__NR_connect] => %px\n", orig_connect);
+		pr_err(" * /proc/kallsyms:sys_connect => %px\n", orig_connect_check);
 		return -EFAULT;
 	}
-	pr_info("located connect(2) = %px\n", orig_connect);
+	pr_info("linked connect(2) => %px\n", orig_connect);
 
 #ifdef CONFIG_SECURITY_NETWORK
 	security_socket_connect_fn = (void *) kallsyms_lookup_name("security_socket_connect");
 	if (!security_socket_connect_fn) {
 		pr_warn("cloud not locate security_socket_connect() address. security features will be disabled.");
 		security_socket_connect_fn = security_socket_connect_noop;
+	} else {
+		pr_info("linked security_socket_connect() => %px\n", security_socket_connect_fn);
 	}
 #endif
 
