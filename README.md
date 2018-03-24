@@ -1,4 +1,4 @@
-# ip_balancer.ko
+# sock_vs.ko
 
 Balance connect(2)ions across servers transparently to the application, with zero overhead after establishment.
 
@@ -47,6 +47,21 @@ $ taskset -c 1 redis-benchmark -h 10.0.0.1 -p 6379 -c 100 -P 1 -t ping -n 100000
 ^CNG_INLINE: 95377.39
 ```
 
+
+### Features
+
+#### Pros
+
+ * Performance. There's no overhead after the connection is established.
+ * Can connect to different port on the real servers. This is what ipvs cannot when using direct routing.
+
+#### Cons
+
+ * There is some overhead on connect(2) and close(2). This shouldn't be noticeable if you don't establish > 100 thousands of connections per second.
+ * Cannot mix IPv4 and IPv6 sevices. IPv4 virtual server can only be served by IPv4 real servers. Same for IPv6.
+ * This is a client-side load balancing solution and works only for locally-originated connect(2)ions. Use iptables or IPVS if you want to accept remote connections.
+ * This is a layer-4 load balancer. Cannot balance load per-request basis. i.e.) all HTTP requests on the same connection goes to the same backend server.
+
 ### Requirements
 
  * Arch: x86\_64
@@ -54,3 +69,8 @@ $ taskset -c 1 redis-benchmark -h 10.0.0.1 -p 6379 -c 100 -P 1 -t ping -n 100000
 ### Caveats
 
  * While `connect(2)` are load-balanced transparently to the application, `getpeername(2)` on the socket will return the real server address, not the virtual one, breaking some transparency.
+
+
+### License
+
+The GNU General Public License v2.0
