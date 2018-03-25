@@ -1,7 +1,11 @@
 #ifndef _CLB_H_
 #define _CLB_H_
 
+
 #include <linux/hashtable.h>
+#include <net/net_namespace.h> // struct net;
+#include <linux/net.h> // enum sock_type;
+#include <linux/socket.h> // struct sockaddr_storage;
 
 
 struct clb_t;

@@ -1,6 +1,11 @@
 #ifndef _CLB_INTERNAL_H_
 #define _CLB_INTERNAL_H_
 
+
+#include <linux/hashtable.h>
+#include <net/net_namespace.h> // struct net;
+
+
 #include "clb.h"
 
 
