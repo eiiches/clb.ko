@@ -24,7 +24,7 @@ struct clb_virtual_server_config_t {
 	int method; // CLB_POLICY_ROUND_ROBIN or CLB_POLICY_LEAST_CONN
 };
 
-extern void clb_virtual_server_for_each(struct clb_t *clb); // TODO: add callback argument
+extern void clb_virtual_servers(struct clb_t *clb); // TODO: add callback argument
 extern int clb_virtual_server_create(struct clb_t *clb, struct clb_virtual_server_config_t *config);
 extern int clb_virtual_server_update(struct clb_t *clb, struct clb_virtual_server_config_t *config);
 extern int clb_virtual_server_delete(struct clb_t *clb, struct clb_virtual_server_address_t *address);
@@ -39,7 +39,7 @@ struct clb_member_config_t {
 	float weight;
 };
 
-extern int clb_virtual_server_for_each_members(struct clb_t *clb, struct clb_virtual_server_address_t *server); // TODO: add callback argument
+extern int clb_virtual_server_members(struct clb_t *clb, struct clb_virtual_server_address_t *server); // TODO: add callback argument
 extern int clb_virtual_server_add_member(struct clb_t *clb, struct clb_virtual_server_address_t *server, struct clb_member_config_t *config);
 extern int clb_virtual_server_change_member(struct clb_t *clb, struct clb_virtual_server_address_t *server, struct clb_member_config_t *config);
 extern int clb_virtual_server_remove_member(struct clb_t *clb, struct clb_virtual_server_address_t *server, struct clb_member_address_t *member);
