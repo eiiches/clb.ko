@@ -2,6 +2,7 @@
 #define _CLB_INTERNAL_H_
 
 
+#include <linux/types.h> // struct hlist_node; struct list_head;
 #include <linux/hashtable.h>
 #include <net/net_namespace.h> // struct net;
 
@@ -27,12 +28,18 @@ struct clb_t {
 struct clb_virtual_server_t {
 	struct clb_virtual_server_address_t address;
 	struct clb_virtual_server_config_t config;
+
+	// List running through all the virtual servers in the same hash slot;
+	struct hlist_node hlist;
 };
 
 
 struct clb_member_t {
 	struct clb_member_address_t address;
 	struct clb_member_config_t config;
+
+	// List of all the members of the virtual server.
+	struct list_head head;
 };
 
 
