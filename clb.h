@@ -13,6 +13,8 @@ struct clb_t {
 	struct radix_tree_root virtual_servers_tcp_v4;
 	struct radix_tree_root virtual_servers_udp_v4;
 
+	// List running through all the clb in the same hash slot.
+	struct hlist_node hlist;
 };
 
 extern struct clb_t *clb_new(const struct net *netns);
