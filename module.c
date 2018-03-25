@@ -18,6 +18,7 @@
 
 #include "connect.h"
 #include "clb.h"
+#include "clb-internal.h"
 
 // REFERENCES:
 //  * net/socket.c : sys_connect
@@ -29,6 +30,7 @@ typedef long (*connect_fn_ptr_t)(int, struct sockaddr __user *, int);
 static sys_call_ptr_t *sys_call_table_ptr;
 static connect_fn_ptr_t orig_connect;
 
+// TODO: add proper locking to netns_clbs
 #define CLB_NETNS_HASH_BITS (7)
 static DEFINE_HASHTABLE(netns_clbs, CLB_NETNS_HASH_BITS);
 

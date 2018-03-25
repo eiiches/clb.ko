@@ -1,24 +1,45 @@
 #ifndef _CLB_H_
 #define _CLB_H_
 
-#include <linux/radix-tree.h>
+#include <linux/hashtable.h>
 
-// This struct exsits for each network namespace if CONFIG_NET_NS.
-struct clb_t {
 
-#ifdef CONFIG_NET_NS
-	const struct net *netns; // network namespace
-#endif
-
-	struct radix_tree_root virtual_servers_tcp_v4;
-	struct radix_tree_root virtual_servers_udp_v4;
-
-	// List running through all the clb in the same hash slot.
-	struct hlist_node hlist;
-};
+struct clb_t;
 
 extern struct clb_t *clb_new(const struct net *netns);
-
 extern void clb_destroy(struct clb_t *clb);
+
+
+
+struct clb_virtual_server_address_t {
+	enum sock_type type; // SOCK_STREAM or SOCK_DGRAM
+	struct sockaddr_storage addr;
+};
+
+struct clb_virtual_server_config_t {
+	int method; // CLB_POLICY_ROUND_ROBIN or CLB_POLICY_LEAST_CONN
+};
+
+extern void clb_virtual_server_for_each(struct clb_t *clb); // TODO: add callback argument
+extern int clb_virtual_server_create(struct clb_t *clb, struct clb_virtual_server_config_t *config);
+extern int clb_virtual_server_update(struct clb_t *clb, struct clb_virtual_server_config_t *config);
+extern int clb_virtual_server_delete(struct clb_t *clb, struct clb_virtual_server_address_t *address);
+
+
+
+struct clb_member_address_t {
+	struct sockaddr_storage addr;
+};
+
+struct clb_member_config_t {
+	float weight;
+};
+
+extern int clb_virtual_server_for_each_members(struct clb_t *clb, struct clb_virtual_server_address_t *server); // TODO: add callback argument
+extern int clb_virtual_server_add_member(struct clb_t *clb, struct clb_virtual_server_address_t *server, struct clb_member_config_t *config);
+extern int clb_virtual_server_change_member(struct clb_t *clb, struct clb_virtual_server_address_t *server, struct clb_member_config_t *config);
+extern int clb_virtual_server_remove_member(struct clb_t *clb, struct clb_virtual_server_address_t *server, struct clb_member_address_t *member);
+
+
 
 #endif /* _CLB_H_ */

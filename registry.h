@@ -3,25 +3,6 @@
 
 #include <linux/net.h>
 
-struct clb_virtual_server_t {
-	enum sock_type type; // SOCK_STREAM or SOCK_DGRAM
-	struct sockaddr_storage addr;
-};
-
-struct clb_virtual_server_config_t {
-	struct clb_virtual_server_t server;
-	int method; // CLB_POLICY_ROUND_ROBIN or CLB_POLICY_LEAST_CONN
-};
-
-struct clb_real_server_t {
-	struct sockaddr_storage addr;
-};
-
-struct clb_real_server_config_t {
-	struct clb_real_server_t server;
-	float weight;
-};
-
 // --- functions for virtual servers
 
 // list all virtual servers
