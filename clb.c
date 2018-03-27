@@ -91,7 +91,7 @@ out:
 }
 
 
-int clb_virtual_server_create(struct clb_t *clb,
+int clb_create_virtual_server(struct clb_t *clb,
                               struct clb_virtual_server_address_t *address,
                               struct clb_virtual_server_config_t *config)
 {
@@ -110,7 +110,7 @@ int clb_virtual_server_create(struct clb_t *clb,
 }
 
 
-int clb_virtual_server_update(struct clb_t *clb,
+int clb_update_virtual_server(struct clb_t *clb,
                               struct clb_virtual_server_address_t *address,
                               struct clb_virtual_server_config_t *config)
 {
@@ -126,7 +126,7 @@ int clb_virtual_server_update(struct clb_t *clb,
 }
 
 
-int clb_virtual_server_delete(struct clb_t *clb,
+int clb_delete_virtual_server(struct clb_t *clb,
                               struct clb_virtual_server_address_t *address)
 {
     // TODO: validate address and config

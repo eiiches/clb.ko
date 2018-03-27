@@ -27,21 +27,21 @@ void clb_test(void)
     };
 
 
-    err = clb_virtual_server_create(clb, &address, &config);
+    err = clb_create_virtual_server(clb, &address, &config);
     if (err) {
-        pr_warn("clb_virtual_server_create() => %d\n", err);
+        pr_warn("clb_create_virtual_server() => %d\n", err);
         goto finally;
     }
 
-    err = clb_virtual_server_update(clb, &address, &config);
+    err = clb_update_virtual_server(clb, &address, &config);
     if (err) {
-        pr_warn("clb_virtual_server_update() => %d\n", err);
+        pr_warn("clb_update_virtual_server() => %d\n", err);
         goto finally;
     }
 
-    err = clb_virtual_server_delete(clb, &address);
+    err = clb_delete_virtual_server(clb, &address);
     if (err) {
-        pr_warn("clb_virtual_server_delete() => %d\n", err);
+        pr_warn("clb_delete_virtual_server() => %d\n", err);
         goto finally;
     }
 

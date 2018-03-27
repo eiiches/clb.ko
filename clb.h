@@ -25,9 +25,9 @@ struct clb_virtual_server_config_t {
 };
 
 extern void clb_virtual_servers(struct clb_t *clb); // TODO: add callback argument
-extern int clb_virtual_server_create(struct clb_t *clb, struct clb_virtual_server_address_t *address, struct clb_virtual_server_config_t *config);
-extern int clb_virtual_server_update(struct clb_t *clb, struct clb_virtual_server_address_t *address, struct clb_virtual_server_config_t *config);
-extern int clb_virtual_server_delete(struct clb_t *clb, struct clb_virtual_server_address_t *address);
+extern int clb_create_virtual_server(struct clb_t *clb, struct clb_virtual_server_address_t *address, struct clb_virtual_server_config_t *config);
+extern int clb_update_virtual_server(struct clb_t *clb, struct clb_virtual_server_address_t *address, struct clb_virtual_server_config_t *config);
+extern int clb_delete_virtual_server(struct clb_t *clb, struct clb_virtual_server_address_t *address);
 
 
 
