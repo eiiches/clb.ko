@@ -31,7 +31,15 @@ struct clb_virtual_server_t {
 
 	// List running through all the virtual servers in the same hash slot;
 	struct hlist_node hlist;
+
+	// List of members which belong to this virtual server
+	struct list_head members;
 };
+
+
+extern struct clb_virtual_server_t *clb_virtual_server_get_internal(struct clb_t *clb,
+																	struct clb_virtual_server_address_t *address,
+																	unsigned long precomputed_address_hash);
 
 
 struct clb_member_t {
@@ -39,8 +47,12 @@ struct clb_member_t {
 	struct clb_member_config_t config;
 
 	// List of all the members of the virtual server.
-	struct list_head head;
+	struct list_head list;
 };
+
+
+extern unsigned long clb_virtual_server_address_hash(struct clb_virtual_server_address_t *address);
+extern bool clb_virtual_server_address_equals(struct clb_virtual_server_address_t *a, struct clb_virtual_server_address_t *b);
 
 
 #endif /* _CLB_INTERNAL_H_ */
