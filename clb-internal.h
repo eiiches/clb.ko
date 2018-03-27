@@ -41,6 +41,9 @@ extern struct clb_virtual_server_t *clb_virtual_server_get_internal(struct clb_t
                                                                     struct clb_virtual_server_address_t *address,
                                                                     unsigned long precomputed_address_hash);
 
+extern struct clb_virtual_server_t *clb_virtual_server_new(struct clb_virtual_server_address_t *address, struct clb_virtual_server_config_t *config);
+extern void clb_virtual_server_destroy(struct clb_virtual_server_t *vs);
+
 
 struct clb_member_t {
     struct clb_member_address_t address;

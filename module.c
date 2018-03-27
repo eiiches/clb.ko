@@ -19,6 +19,7 @@
 #include "connect.h"
 #include "clb.h"
 #include "clb-internal.h"
+#include "clb-test.h"
 
 // REFERENCES:
 //  * net/socket.c : sys_connect
@@ -96,6 +97,7 @@ static struct pernet_operations clb_net_ops = {
 static int __init clb_init(void)
 {
     pr_info("init\n");
+    clb_test();
 
 #ifdef CONFIG_NET_NS
     // Per netns init/exit handlers. Also invoked for init_net.
