@@ -14,12 +14,15 @@ struct clb_t *clb_new(const struct net *netns)
     struct clb_t *clb = (struct clb_t *) kzalloc(sizeof(struct clb_t), GFP_KERNEL);
     clb->netns = netns;
     hash_init(clb->virtual_servers);
+    pr_debug("clb_new(...) => %px\n", clb);
     return clb;
 }
 
 
 void clb_destroy(struct clb_t *clb)
 {
+    pr_debug("clb_destroy(%px)\n", clb);
+
     // destroy all virtual servers
     unsigned int bkt;
     struct hlist_node *tmp;
@@ -120,6 +123,7 @@ unsigned long clb_virtual_server_address_hash(struct clb_virtual_server_address_
     // TODO implement
     return 0;
 }
+
 
 bool clb_virtual_server_address_equals(struct clb_virtual_server_address_t *a, struct clb_virtual_server_address_t *b) {
     if (a->type != b->type)
