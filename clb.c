@@ -40,6 +40,14 @@ void clb_destroy(struct clb_t *clb)
 }
 
 
+struct clb_virtual_server_t *clb_find_virtual_server_by_address(struct clb_t *clb,
+                                                                struct clb_virtual_server_address_t *address)
+{
+    unsigned long address_hash = clb_virtual_server_address_hash(address);
+    return clb_find_virtual_server_by_address_and_hash(clb, address, address_hash);
+}
+
+
 struct clb_virtual_server_t *clb_find_virtual_server_by_address_and_hash(struct clb_t *clb,
                                                                          struct clb_virtual_server_address_t *address,
                                                                          unsigned long precomputed_address_hash)
