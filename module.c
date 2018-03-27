@@ -74,8 +74,10 @@ static int __net_init clb_net_init(struct net *netns) {
 
     // create corresponding clb and register a mapping
     struct clb_t *clb = clb_new(netns);
-    hash_add(netns_clbs, &clb->hlist, (unsigned long) netns);
+    if (!clb)
+        return -ENOMEM;
 
+    hash_add(netns_clbs, &clb->hlist, (unsigned long) netns);
     return 0;
 }
 
@@ -84,7 +86,10 @@ static void __net_exit clb_net_exit(struct net *net) {
 
     // destroy corresponding clb
     struct clb_t *clb = clb_find_by_netns(net);
-    WARN_ON(!clb);
+    if (!clb) {
+        pr_warn("clb_net_exit: could not find clb entry for netns");
+        return;
+    }
     hash_del(&clb->hlist);
     clb_destroy(clb);
 }

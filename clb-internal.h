@@ -25,6 +25,13 @@ struct clb_t {
 };
 
 
+extern struct clb_virtual_server_t *clb_find_virtual_server_by_address(struct clb_t *clb,
+                                                                       struct clb_virtual_server_address_t *address);
+extern struct clb_virtual_server_t *clb_find_virtual_server_by_address_and_hash(struct clb_t *clb,
+                                                                                struct clb_virtual_server_address_t *address,
+                                                                                unsigned long precomputed_address_hash);
+
+
 struct clb_virtual_server_t {
     struct clb_virtual_server_address_t address;
     struct clb_virtual_server_config_t config;
@@ -37,10 +44,6 @@ struct clb_virtual_server_t {
 };
 
 
-extern struct clb_virtual_server_t *clb_virtual_server_get_internal(struct clb_t *clb,
-                                                                    struct clb_virtual_server_address_t *address,
-                                                                    unsigned long precomputed_address_hash);
-
 extern struct clb_virtual_server_t *clb_virtual_server_new(struct clb_virtual_server_address_t *address, struct clb_virtual_server_config_t *config);
 extern void clb_virtual_server_destroy(struct clb_virtual_server_t *vs);
 
@@ -52,6 +55,10 @@ struct clb_member_t {
     // List of all the members of the virtual server.
     struct list_head list;
 };
+
+
+extern struct clb_member_t *clb_member_new(struct clb_member_address_t *address, struct clb_member_config_t *config);
+extern void clb_member_destroy(struct clb_member_t *member);
 
 
 extern unsigned long clb_virtual_server_address_hash(struct clb_virtual_server_address_t *address);
