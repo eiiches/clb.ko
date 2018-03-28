@@ -41,7 +41,7 @@ extern int clb_virtual_server_update_config(struct clb_virtual_server_t *vs, str
 
 static inline bool clb_virtual_server_is_inuse(struct clb_virtual_server_t *vs)
 {
-    return hlist_unhashed(&vs->hlist);
+    return !hlist_unhashed(&vs->hlist);
 }
 
 

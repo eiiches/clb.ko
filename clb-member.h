@@ -41,7 +41,7 @@ extern void clb_member_update_config(struct clb_member_t *member, struct clb_mem
 
 static inline bool clb_member_is_inuse(struct clb_member_t *member)
 {
-    return hlist_unhashed(&member->members_node);
+    return !hlist_unhashed(&member->members_node);
 }
 
 
