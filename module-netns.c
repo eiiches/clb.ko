@@ -4,9 +4,6 @@
 #include "module-netns.h"
 
 
-#ifdef CONFIG_NET_NS
-
-
 #include <net/net_namespace.h>
 
 #define CLB_PRIVATE
@@ -72,25 +69,3 @@ struct clb_t *clb_module_find(struct net *netns) {
     }
     return NULL;
 }
-
-
-#else /* CONFIG_NET_NS */
-
-
-static struct clb_t *clb;
-
-
-void clb_module_netns_init(void) {
-    clb = clb_new(NULL);
-}
-
-void clb_module_netns_exit(void) {
-    clb_destroy(clb);
-}
-
-struct clb_t *clb_module_find(struct net *netns) {
-    return clb;
-}
-
-
-#endif /* CONFIG_NET_NS */

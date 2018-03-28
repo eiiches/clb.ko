@@ -22,12 +22,8 @@ struct clb_t;
 #ifdef CLB_PRIVATE
 
 
-// This struct exsits for each network namespace if CONFIG_NET_NS.
 struct clb_t {
-
-#ifdef CONFIG_NET_NS
     const struct net *netns; // network namespace
-#endif
 
 #define CLB_VIRTUAL_SERVER_HASH_BITS (7)
     DECLARE_HASHTABLE(virtual_servers, CLB_VIRTUAL_SERVER_HASH_BITS);
