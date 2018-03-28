@@ -43,9 +43,10 @@ out:
 
 int clb_virtual_server_register_member(struct clb_virtual_server_t *vs, struct clb_member_t *member)
 {
+    // TODO: check already registered
     unsigned long address_hash = clb_member_address_hash(&member->address);
     hash_add(vs->members, &member->members_node, address_hash);
-    // TODO: remove from rbtree
+    // TODO: add to rbtree
     return 0;
 }
 
@@ -67,4 +68,11 @@ struct clb_member_t *clb_virtual_server_find_member_by_address(struct clb_virtua
             return iter;
     }
     return NULL;
+}
+
+
+int clb_virtual_server_update_config(struct clb_virtual_server_t *vs, struct clb_virtual_server_config_t *config)
+{
+    vs->config = *config;
+    return 0;
 }

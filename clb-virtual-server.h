@@ -37,6 +37,8 @@ extern int clb_virtual_server_unregister_member(struct clb_virtual_server_t *vs,
 
 extern struct clb_member_t *clb_virtual_server_find_member_by_address(struct clb_virtual_server_t *vs, struct clb_member_address_t *address);
 
+extern int clb_virtual_server_update_config(struct clb_virtual_server_t *vs, struct clb_virtual_server_config_t *config);
+
 
 #endif /* CLB_PRIVATE */
 

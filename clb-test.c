@@ -1,9 +1,11 @@
-#define pr_fmt(fmt) KBUILD_MODNAME " (clb-test.c): " fmt
+#define pr_fmt(fmt) KBUILD_MODNAME " (" __FILE__ "): " fmt
+
 
 #include <net/net_namespace.h>
 #include <uapi/linux/in.h>
 
-#include "clb.h"
+#define CLB_PRIVATE
+#include "clb-api.h"
 
 
 void clb_test(void)

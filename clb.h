@@ -18,20 +18,6 @@
 
 struct clb_t;
 
-extern struct clb_t *clb_new(const struct net *netns);
-extern void clb_destroy(struct clb_t *clb);
-
-extern void clb_virtual_servers(struct clb_t *clb); // TODO: add callback argument
-extern int clb_create_virtual_server(struct clb_t *clb, struct clb_virtual_server_address_t *address, struct clb_virtual_server_config_t *config);
-extern int clb_update_virtual_server(struct clb_t *clb, struct clb_virtual_server_address_t *address, struct clb_virtual_server_config_t *config);
-extern int clb_delete_virtual_server(struct clb_t *clb, struct clb_virtual_server_address_t *address);
-
-
-extern int clb_virtual_server_members(struct clb_t *clb, struct clb_virtual_server_address_t *server); // TODO: add callback argument
-extern int clb_virtual_server_add_member(struct clb_t *clb, struct clb_virtual_server_address_t *server, struct clb_member_address_t *member, struct clb_member_config_t *config);
-extern int clb_virtual_server_change_member(struct clb_t *clb, struct clb_virtual_server_address_t *server, struct clb_member_address_t *member, struct clb_member_config_t *config);
-extern int clb_virtual_server_remove_member(struct clb_t *clb, struct clb_virtual_server_address_t *server, struct clb_member_address_t *member);
-
 
 #ifdef CLB_PRIVATE
 
@@ -51,12 +37,17 @@ struct clb_t {
 };
 
 
-extern struct clb_virtual_server_t *clb_find_virtual_server_by_address(struct clb_t *clb,
-                                                                       struct clb_virtual_server_address_t *address);
+extern struct clb_t *clb_new(const struct net *netns);
 
-extern struct clb_virtual_server_t *clb_find_virtual_server_by_address_and_hash(struct clb_t *clb,
-                                                                                struct clb_virtual_server_address_t *address,
-                                                                                unsigned long precomputed_address_hash);
+extern void clb_destroy(struct clb_t *clb);
+
+extern struct clb_virtual_server_t *clb_find_virtual_server_by_address(struct clb_t *clb, struct clb_virtual_server_address_t *address);
+
+extern struct clb_virtual_server_t *clb_find_virtual_server_by_address_and_hash(struct clb_t *clb, struct clb_virtual_server_address_t *address, unsigned long precomputed_address_hash);
+
+extern int clb_register_virtual_server(struct clb_t *clb, struct clb_virtual_server_t *vs);
+
+extern int clb_unregister_virtual_server(struct clb_t *clb, struct clb_virtual_server_t *vs);
 
 
 #endif /* CLB_PRIVATE */
