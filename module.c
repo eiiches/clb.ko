@@ -16,9 +16,9 @@
 #include <uapi/linux/in.h>
 #include <uapi/linux/in6.h>
 
+#define CLB_PRIVATE
 #include "connect.h"
 #include "clb.h"
-#include "clb-internal.h"
 #include "clb-test.h"
 
 // REFERENCES:

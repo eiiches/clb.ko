@@ -1,5 +1,6 @@
 #define pr_fmt(fmt) KBUILD_MODNAME " (clb.c): " fmt
 
+
 #include <linux/hashtable.h>
 #include <linux/gfp.h>
 #include <linux/slab.h>
@@ -7,7 +8,6 @@
 
 #define CLB_PRIVATE
 #include "clb.h"
-#include "clb-internal.h"
 
 
 struct clb_t *clb_new(const struct net *netns)
