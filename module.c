@@ -9,7 +9,7 @@
 #include "module-netlink.h"
 
 
-static int __init clb_init(void)
+static int __init clb_module_init(void)
 {
     pr_info("init\n");
 
@@ -28,7 +28,7 @@ fail_syscall_init:
 }
 
 
-static void __exit clb_exit(void)
+static void __exit clb_module_exit(void)
 {
     clb_module_netlink_exit();
     clb_module_syscall_exit();
@@ -38,6 +38,6 @@ static void __exit clb_exit(void)
 }
 
 
-module_init(clb_init);
-module_exit(clb_exit);
+module_init(clb_module_init);
+module_exit(clb_module_exit);
 MODULE_LICENSE("GPL");
