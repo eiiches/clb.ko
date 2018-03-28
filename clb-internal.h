@@ -32,37 +32,8 @@ extern struct clb_virtual_server_t *clb_find_virtual_server_by_address_and_hash(
                                                                                 unsigned long precomputed_address_hash);
 
 
-struct clb_virtual_server_t {
-    struct clb_virtual_server_address_t address;
-    struct clb_virtual_server_config_t config;
-
-    // List running through all the virtual servers in the same hash slot;
-    struct hlist_node hlist;
-
-    // List of members which belong to this virtual server
-    struct list_head members;
-};
 
 
-extern struct clb_virtual_server_t *clb_virtual_server_new(struct clb_virtual_server_address_t *address, struct clb_virtual_server_config_t *config);
-extern void clb_virtual_server_destroy(struct clb_virtual_server_t *vs);
-
-
-struct clb_member_t {
-    struct clb_member_address_t address;
-    struct clb_member_config_t config;
-
-    // List of all the members of the virtual server.
-    struct list_head list;
-};
-
-
-extern struct clb_member_t *clb_member_new(struct clb_member_address_t *address, struct clb_member_config_t *config);
-extern void clb_member_destroy(struct clb_member_t *member);
-
-
-extern unsigned long clb_virtual_server_address_hash(struct clb_virtual_server_address_t *address);
-extern bool clb_virtual_server_address_equals(struct clb_virtual_server_address_t *a, struct clb_virtual_server_address_t *b);
 
 
 #endif /* _CLB_INTERNAL_H_ */
