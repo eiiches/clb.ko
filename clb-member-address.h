@@ -15,7 +15,7 @@ struct clb_member_address_t {
 
 extern unsigned long clb_member_address_hash(struct clb_member_address_t *member);
 
-extern bool clb_member_address_equals(struct clb_member_address_t *member);
+extern bool clb_member_address_equals(struct clb_member_address_t *a, struct clb_member_address_t *b);
 
 
 #endif /* CLB_PRIVATE */

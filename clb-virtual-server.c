@@ -39,3 +39,32 @@ out:
     pr_debug("clb_virtual_server_new(...) => %px\n", vs);
     return vs;
 }
+
+
+int clb_virtual_server_register_member(struct clb_virtual_server_t *vs, struct clb_member_t *member)
+{
+    unsigned long address_hash = clb_member_address_hash(&member->address);
+    hash_add(vs->members, &member->members_node, address_hash);
+    // TODO: remove from rbtree
+    return 0;
+}
+
+
+int clb_virtual_server_unregister_member(struct clb_virtual_server_t *vs, struct clb_member_t *member)
+{
+    hash_del(&member->members_node);
+    // TODO: remove from rbtree
+    return 0;
+}
+
+
+struct clb_member_t *clb_virtual_server_find_member_by_address(struct clb_virtual_server_t *vs, struct clb_member_address_t *address)
+{
+    struct clb_member_t *iter;
+    unsigned long address_hash = clb_member_address_hash(address);
+    hash_for_each_possible(vs->members, iter, members_node, address_hash) {
+        if (clb_member_address_equals(&iter->address, address))
+            return iter;
+    }
+    return NULL;
+}

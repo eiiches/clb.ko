@@ -62,8 +62,6 @@ struct clb_virtual_server_t *clb_find_virtual_server_by_address_and_hash(struct 
 }
 
 
-
-
 int clb_create_virtual_server(struct clb_t *clb,
                               struct clb_virtual_server_address_t *address,
                               struct clb_virtual_server_config_t *config)
@@ -123,12 +121,7 @@ int clb_virtual_server_add_member(struct clb_t *clb, struct clb_virtual_server_a
     struct clb_member_t *member = clb_member_new(address, config);
     if (!member)
         return -ENOMEM;
-    unsigned long address_hash = clb_member_address_hash(&member->address);
-    hash_add(vs->members, &member->members_node, address_hash);
-
-
-
-    return 0;
+    return clb_virtual_server_register_member(vs, member);
 }
 
 
@@ -137,18 +130,21 @@ int clb_virtual_server_change_member(struct clb_t *clb, struct clb_virtual_serve
     struct clb_virtual_server_t *vs = clb_find_virtual_server_by_address(clb, server);
     if (!vs)
         return -ENOENT;
-
-    // TODO: implement
+    struct clb_member_t *member = clb_virtual_server_find_member_by_address(vs, address);
+    if (!member)
+        return -ENOENT;
+    clb_member_update_config(member, config);
     return 0;
 }
 
 
-int clb_virtual_server_remove_member(struct clb_t *clb, struct clb_virtual_server_address_t *server, struct clb_member_address_t *member)
+int clb_virtual_server_remove_member(struct clb_t *clb, struct clb_virtual_server_address_t *server, struct clb_member_address_t *address)
 {
     struct clb_virtual_server_t *vs = clb_find_virtual_server_by_address(clb, server);
     if (!vs)
         return -ENOENT;
-
-    // TODO: implement
-    return 0;
+    struct clb_member_t *member = clb_virtual_server_find_member_by_address(vs, address);
+    if (!member)
+        return -ENOENT;
+    return clb_virtual_server_unregister_member(vs, member);
 }

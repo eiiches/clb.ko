@@ -37,6 +37,8 @@ extern struct clb_member_t *clb_member_new(struct clb_member_address_t *address,
 
 extern void clb_member_destroy(struct clb_member_t *member);
 
+extern void clb_member_update_config(struct clb_member_t *member, struct clb_member_config_t *config);
+
 
 #endif /* CLB_PRIVATE */
 

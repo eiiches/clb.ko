@@ -25,3 +25,9 @@ void clb_member_destroy(struct clb_member_t *member)
     pr_debug("clb_member_destroy(%px)\n", member);
     kfree(member);
 }
+
+
+void clb_member_update_config(struct clb_member_t *member, struct clb_member_config_t *config)
+{
+    member->config = *config;
+}

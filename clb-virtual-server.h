@@ -31,6 +31,12 @@ extern struct clb_virtual_server_t *clb_virtual_server_new(struct clb_virtual_se
 
 extern void clb_virtual_server_destroy(struct clb_virtual_server_t *vs);
 
+extern int clb_virtual_server_register_member(struct clb_virtual_server_t *vs, struct clb_member_t *member);
+
+extern int clb_virtual_server_unregister_member(struct clb_virtual_server_t *vs, struct clb_member_t *member);
+
+extern struct clb_member_t *clb_virtual_server_find_member_by_address(struct clb_virtual_server_t *vs, struct clb_member_address_t *address);
+
 
 #endif /* CLB_PRIVATE */
 
