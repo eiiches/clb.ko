@@ -1,6 +1,25 @@
+end-of-list :=
+
 obj-m += connect_lb.o
-connect_lb-objs := module.o connect.o clb.o module-test.o clb-member-address.o clb-member.o clb-virtual-server.o clb-virtual-server-address.o clb-api.o sockaddr.o module-netns.o module-syscall.o module-netlink.o
+
+connect_lb-objs := \
+	clb.o \
+	clb-api.o \
+	clb-member-address.o \
+	clb-member.o \
+	clb-virtual-server.o \
+	clb-virtual-server-address.o \
+	module.o \
+	module-netlink.o \
+	module-netns.o \
+	module-syscall-connect.o \
+	module-syscall.o \
+	module-test.o \
+	sockaddr.o \
+	$(end-of-list)
+
 ccflags-y := -DDEBUG -std=gnu99 -Wno-declaration-after-statement
+
 BUILD_DIR := /lib/modules/`uname -r`/build
 
 .PHONY: modules

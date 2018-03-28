@@ -10,7 +10,7 @@
 #include <uapi/linux/in.h>
 #include <uapi/linux/in6.h>
 
-#include "connect.h"
+#include "module-syscall-connect.h"
 
 
 static void clb_connect_do_balance_v4(struct sockaddr_in *addr)

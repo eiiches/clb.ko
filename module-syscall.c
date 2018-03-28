@@ -15,7 +15,7 @@
 #include <uapi/linux/in.h>
 #include <uapi/linux/in6.h>
 
-#include "connect.h"
+#include "module-syscall-connect.h"
 #include "module-syscall.h"
 
 
