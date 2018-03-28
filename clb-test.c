@@ -35,6 +35,23 @@ void clb_test(void)
         goto finally;
     }
 
+    struct clb_member_address_t member;
+    struct sockaddr_in msin = {
+        .sin_family = AF_INET,
+        .sin_port = 8080,
+        .sin_addr.s_addr = (2 << 24) + 127, // 127.0.0.2
+    };
+    clb_member_address_set_sockaddr_in(&member, &msin);
+    struct clb_member_config_t member_config = {
+        .weight = 1.0f
+    };
+
+    err = clb_virtual_server_add_member(clb, &address, &member, &member_config);
+    if (err) {
+        pr_warn("clb_virtual_server_add_member() => %d\n", err);
+        goto finally;
+    }
+
     err = clb_update_virtual_server(clb, &address, &config);
     if (err) {
         pr_warn("clb_update_virtual_server() => %d\n", err);

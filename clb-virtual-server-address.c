@@ -1,9 +1,6 @@
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
 
-#include <uapi/linux/in.h> // struct sockaddr_in;
-#include <uapi/linux/in6.h> // struct sockaddr_in6;
-
 #define CLB_PRIVATE
 #include "sockaddr.h"
 #include "clb-virtual-server-address.h"
