@@ -9,7 +9,6 @@ int clb_create_virtual_server(struct clb_t *clb,
                               struct clb_virtual_server_address_t *address,
                               struct clb_virtual_server_config_t *config)
 {
-    // TODO: validate address
     struct clb_virtual_server_t *vs = clb_virtual_server_new(address, config);
     if (!vs)
         return -ENOMEM;
@@ -27,7 +26,6 @@ int clb_update_virtual_server(struct clb_t *clb,
                               struct clb_virtual_server_address_t *address,
                               struct clb_virtual_server_config_t *config)
 {
-    // TODO: validate address
     struct clb_virtual_server_t *vs = clb_find_virtual_server_by_address(clb, address);
     if (!vs)
         return -ENOENT;
@@ -38,7 +36,6 @@ int clb_update_virtual_server(struct clb_t *clb,
 int clb_delete_virtual_server(struct clb_t *clb,
                               struct clb_virtual_server_address_t *address)
 {
-    // TODO: validate address
     struct clb_virtual_server_t *vs = clb_find_virtual_server_by_address(clb, address);
     if (!vs)
         return -ENOENT;
