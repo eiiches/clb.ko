@@ -1,5 +1,5 @@
 obj-m += connect_lb.o
-connect_lb-objs := module.o connect.o clb.o clb-test.o clb-member-address.o clb-member.o clb-virtual-server.o clb-virtual-server-address.o clb-api.o sockaddr.o netns.o
+connect_lb-objs := module.o connect.o clb.o clb-test.o clb-member-address.o clb-member.o clb-virtual-server.o clb-virtual-server-address.o clb-api.o sockaddr.o module-netns.o
 ccflags-y := -DDEBUG -std=gnu99 -Wno-declaration-after-statement
 BUILD_DIR := /lib/modules/`uname -r`/build
 
