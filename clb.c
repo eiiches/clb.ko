@@ -55,7 +55,8 @@ struct clb_virtual_server_t *clb_find_virtual_server_by_address(struct clb_t *cl
 
 int clb_register_virtual_server(struct clb_t *clb, struct clb_virtual_server_t *vs)
 {
-    // TODO: check already registered
+    if (clb_virtual_server_is_inuse(vs))
+        return -EBUSY; // the virtual server is already registered somewhere
     unsigned long address_hash = clb_virtual_server_address_hash(&vs->address);
     hash_add(clb->virtual_servers, &vs->hlist, address_hash);
     return 0;

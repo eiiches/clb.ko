@@ -39,6 +39,11 @@ extern struct clb_member_t *clb_virtual_server_find_member_by_address(struct clb
 
 extern int clb_virtual_server_update_config(struct clb_virtual_server_t *vs, struct clb_virtual_server_config_t *config);
 
+static inline bool clb_virtual_server_is_inuse(struct clb_virtual_server_t *vs)
+{
+    return hlist_unhashed(&vs->hlist);
+}
+
 
 #endif /* CLB_PRIVATE */
 
