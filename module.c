@@ -60,7 +60,7 @@ static int __init clb_init(void)
     pr_info("init\n");
     clb_test();
 
-    clb_netns_init();
+    clb_module_netns_init();
 
     sys_call_table_ptr = (sys_call_ptr_t *) kallsyms_lookup_name("sys_call_table");
     if (!sys_call_table_ptr) {
@@ -98,7 +98,7 @@ static void __exit clb_exit(void)
     int err = clb_override_sys_call(__NR_connect, (sys_call_ptr_t) orig_connect);
     WARN_ON(err);
 
-    clb_netns_exit();
+    clb_module_netns_exit();
 
     pr_info("exit\n");
     return;

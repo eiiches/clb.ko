@@ -8,7 +8,7 @@
 #include "clb-api.h"
 
 
-void clb_test(void)
+void clb_module_test(void)
 {
     pr_info("executing clb_test()\n");
     int err;

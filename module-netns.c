@@ -35,7 +35,7 @@ static void __net_exit clb_net_exit(struct net *net) {
     pr_info("net_exit: %px\n", net);
 
     // destroy corresponding clb
-    struct clb_t *clb = clb_find(net);
+    struct clb_t *clb = clb_module_find(net);
     if (!clb) {
         pr_warn("clb_net_exit: could not find clb entry for netns");
         return;
@@ -51,19 +51,19 @@ static struct pernet_operations clb_net_ops = {
 };
 
 
-void clb_netns_init(void) {
+void clb_module_netns_init(void) {
     // Per netns init/exit handlers. Also invoked for init_net.
     register_pernet_subsys(&clb_net_ops);
 }
 
 
-void clb_netns_exit(void) {
+void clb_module_netns_exit(void) {
     // Per netns init/exit handlers. Also invoked for init_net.
     unregister_pernet_subsys(&clb_net_ops);
 }
 
 
-struct clb_t *clb_find(struct net *netns) {
+struct clb_t *clb_module_find(struct net *netns) {
     struct clb_t *iter;
     hash_for_each_possible(netns_clbs, iter, hlist, (unsigned long) netns) {
         if (iter->netns != netns)
@@ -80,15 +80,15 @@ struct clb_t *clb_find(struct net *netns) {
 static struct clb_t *clb;
 
 
-void clb_netns_init(void) {
+void clb_module_netns_init(void) {
     clb = clb_new(NULL);
 }
 
-void clb_netns_exit(void) {
+void clb_module_netns_exit(void) {
     clb_destroy(clb);
 }
 
-struct clb_t *clb_find(struct net *netns) {
+struct clb_t *clb_module_find(struct net *netns) {
     return clb;
 }
 
