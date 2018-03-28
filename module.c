@@ -58,7 +58,7 @@ static int clb_override_sys_call(int sys_call_nr, sys_call_ptr_t sys_call_fn) {
 static int __init clb_init(void)
 {
     pr_info("init\n");
-    clb_test();
+    clb_module_test();
 
     clb_module_netns_init();
 
