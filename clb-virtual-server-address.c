@@ -11,7 +11,7 @@
 
 unsigned long clb_virtual_server_address_hash(struct clb_virtual_server_address_t *address)
 {
-    // TODO: address->type
+    // TODO: add address->type to hash
     return sockaddr_hash(&address->addr);
 }
 
