@@ -39,6 +39,11 @@ extern void clb_member_destroy(struct clb_member_t *member);
 
 extern void clb_member_update_config(struct clb_member_t *member, struct clb_member_config_t *config);
 
+static inline bool clb_member_is_inuse(struct clb_member_t *member)
+{
+    return hlist_unhashed(&member->members_node);
+}
+
 
 #endif /* CLB_PRIVATE */
 

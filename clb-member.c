@@ -14,6 +14,7 @@ struct clb_member_t *clb_member_new(struct clb_member_address_t *address, struct
         goto out;
     member->address = *address;
     member->config = *config;
+    INIT_HLIST_NODE(&member->members_node);
 out:
     pr_debug("clb_member_new(...) => %px\n", member);
     return member;
