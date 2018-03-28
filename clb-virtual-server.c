@@ -47,6 +47,9 @@ int clb_virtual_server_register_member(struct clb_virtual_server_t *vs, struct c
     if (clb_member_is_inuse(member))
         return -EBUSY; // member is already inuse
 
+    if (clb_virtual_server_find_member_by_address(vs, &member->address))
+        return -EEXIST; // member with the same address exists
+
     // reset counters
     member->num_current_connections = 0;
     member->num_connection_attempts = 0;

@@ -10,14 +10,16 @@ int clb_create_virtual_server(struct clb_t *clb,
                               struct clb_virtual_server_config_t *config)
 {
     // TODO: validate address
-    // struct clb_virtual_server_t *vs = clb_find_virtual_server_by_address(clb, address);
-    // if (vs)
-    //    return -EEXIST;
     struct clb_virtual_server_t *vs = clb_virtual_server_new(address, config);
     if (!vs)
         return -ENOMEM;
-    return clb_register_virtual_server(clb, vs);
-    // TODO: destroy vs immediately on error
+    int err = clb_register_virtual_server(clb, vs);
+    if (err)
+        goto fail;
+    return 0;
+fail:
+    clb_virtual_server_destroy(vs);
+    return err;
 }
 
 
