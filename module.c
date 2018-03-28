@@ -19,8 +19,8 @@
 #define CLB_PRIVATE
 #include "connect.h"
 #include "clb.h"
-#include "clb-test.h"
-#include "netns.h"
+#include "module-test.h"
+#include "module-netns.h"
 
 // REFERENCES:
 //  * net/socket.c : sys_connect

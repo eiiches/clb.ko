@@ -1,6 +1,7 @@
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
-#include "netns.h"
+
+#include "module-netns.h"
 
 
 #ifdef CONFIG_NET_NS
