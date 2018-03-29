@@ -5,7 +5,7 @@
 #include <net/genetlink.h> // struct genl_family;
 #include <net/sock.h> // sock_net;
 
-#include "include/uapi/clb/netlink.h"
+#include <uapi/clb/netlink.h>
 #include "module-netlink.h"
 
 

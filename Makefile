@@ -18,7 +18,7 @@ connect_lb-objs := \
 	sockaddr.o \
 	$(end-of-list)
 
-ccflags-y := -DDEBUG -std=gnu99 -Wno-declaration-after-statement
+ccflags-y := -DDEBUG -std=gnu99 -Wno-declaration-after-statement -I$(PWD)/include
 
 BUILD_DIR := /lib/modules/`uname -r`/build
 
@@ -29,6 +29,10 @@ modules:
 .PHONY: clean
 clean:
 	$(MAKE) -C $(BUILD_DIR) M=$(PWD) clean
+
+.PHONY: modules_install
+modules_install:
+	$(MAKE) -C $(BUILD_DIR) M=$(PWD) modules_install
 
 .PHONY: insmod
 insmod: modules
