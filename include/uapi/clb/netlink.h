@@ -7,15 +7,18 @@
 #define CLB_NETLINK_VERSION 0x01
 
 
-enum clb_netlink_cmds {
+enum clb_netlink_command {
+    CLB_NETLINK_COMMAND_LIST_VS,
     CLB_NETLINK_COMMAND_CREATE_VS,
+    CLB_NETLINK_COMMAND_UPDATE_VS,
+    CLB_NETLINK_COMMAND_DELETE_VS,
     NUM_CLB_NETLINK_COMMANDS,
 };
 
 
-enum clb_netlink_cmd_attr {
-    CLB_NETLINK_CMD_ATTR_VS = 0,
-    NUM_CLB_NETLINK_CMD_ATTRS
+enum clb_netlink_command_attrs {
+    CLB_NETLINK_COMMAND_ATTR_VS = 0,
+    NUM_CLB_NETLINK_COMMAND_ATTRS
 };
 
 

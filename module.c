@@ -12,7 +12,6 @@
 static int __init clb_module_init(void)
 {
     pr_info("init\n");
-
     clb_module_test();
 
     int err;

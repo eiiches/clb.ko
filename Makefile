@@ -16,9 +16,10 @@ connect_lb-objs := \
 	module-syscall.o \
 	module-test.o \
 	sockaddr.o \
+	libprotobuf-c.o \
 	$(end-of-list)
 
-ccflags-y := -DDEBUG -std=gnu99 -Wno-declaration-after-statement -I$(src)/include
+ccflags-y := -DDEBUG -std=gnu99 -Wno-declaration-after-statement -I$(src)/include -I$(src)/include/std-empty
 
 BUILD_DIR := /lib/modules/`uname -r`/build
 

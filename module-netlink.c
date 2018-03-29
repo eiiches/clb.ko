@@ -15,8 +15,8 @@ static int clb_netlink_cmd_create_vs(struct sk_buff *skb, struct genl_info *info
 }
 
 
-static const struct nla_policy clb_netlink_cmd_policy[NUM_CLB_NETLINK_CMD_ATTRS] = {
-    [CLB_NETLINK_CMD_ATTR_VS] = { .type = NLA_NESTED },
+static const struct nla_policy clb_netlink_cmd_policy[NUM_CLB_NETLINK_COMMAND_ATTRS] = {
+    [CLB_NETLINK_COMMAND_ATTR_VS] = { .type = NLA_NESTED },
 };
 
 
@@ -34,7 +34,7 @@ static struct genl_family clb_netlink_family __ro_after_init = {
     .hdrsize = 0,
     .name = CLB_NETLINK_NAME,
     .version = CLB_NETLINK_VERSION,
-    .maxattr = NUM_CLB_NETLINK_CMD_ATTRS,
+    .maxattr = NUM_CLB_NETLINK_COMMAND_ATTRS,
     .netnsok = true,
     .module = THIS_MODULE,
     .ops = clb_netlink_ops,
