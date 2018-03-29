@@ -49,7 +49,7 @@ static int clb_override_sys_call(int sys_call_nr, sys_call_ptr_t sys_call_fn) {
 }
 
 
-int clb_module_syscall_init(void) {
+int __init clb_module_syscall_init(void) {
     sys_call_table_ptr = (sys_call_ptr_t *) kallsyms_lookup_name("sys_call_table");
     if (!sys_call_table_ptr) {
         pr_err("could not locate sys_call_table, exiting.");
