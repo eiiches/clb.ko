@@ -46,8 +46,6 @@ message MemberConfig {
 	float weight = 1;
 }
 
-// Virtual Server Manipulation API
-
 message CreateVirtualServerRequest {
 	VirtualServerAddress address = 1;
 	VirtualServerConfig config = 2;
@@ -61,8 +59,6 @@ message UpdateVirtualServerRequest {
 message DeleteVirtualServerRequest {
 	VirtualServerAddress address = 1;
 }
-
-// Member Manipulation API
 
 message AddMemberRequest {
 	VirtualServerAddress server = 1;
@@ -79,4 +75,18 @@ message ChangeMemberRequest {
 	VirtualServerAddress server = 1;
 	MemberAddress member = 2;
 	MemberConfig config = 3;
+}
+
+message Status {
+	// 0 for success
+	uint32 code = 1;
+}
+
+service Clb {
+	rpc CreateVirtualServer(CreateVirtualServerRequest) returns (Status);
+	rpc UpdateVirtualServer(UpdateVirtualServerRequest) returns (Status);
+	rpc DeleteVirtualServer(DeleteVirtualServerRequest) returns (Status);
+	rpc AddMember(AddMemberRequest) returns (Status);
+	rpc ChangeMember(ChangeMemberRequest) returns (Status);
+	rpc RemoveMember(RemoveMemberRequest) returns (Status);
 }
