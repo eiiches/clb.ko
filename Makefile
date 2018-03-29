@@ -34,6 +34,10 @@ clean:
 modules_install:
 	$(MAKE) -C $(BUILD_DIR) M=$(PWD) modules_install
 
+.PHONY: help
+help:
+	$(MAKE) -C $(BUILD_DIR) M=$(PWD) help
+
 .PHONY: insmod
 insmod: modules
 	insmod connect_lb.ko
@@ -41,3 +45,5 @@ insmod: modules
 .PHONY: rmmod
 rmmod:
 	rmmod connect_lb
+
+# reference: https://www.kernel.org/doc/Documentation/kbuild/modules.txt
