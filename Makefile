@@ -25,7 +25,7 @@ ccflags-y := -DDEBUG -std=gnu99 -Wno-declaration-after-statement -I$(src)/includ
 BUILD_DIR := /lib/modules/`uname -r`/build
 
 .PHONY: modules
-modules:
+modules: netlink.pb-c.c netlink.pb-c.h
 	$(MAKE) -C $(BUILD_DIR) M=$(PWD) modules
 
 .PHONY: clean

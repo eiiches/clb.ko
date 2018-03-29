@@ -1,8 +1,82 @@
-
 syntax = "proto3";
-message Person {
-	string name = 1;
-	int32 id = 2;
-	string email = 3;
+
+enum SocketType {
+	SOCK_STREAM = 0;
+	SOCK_DGRAM = 1;
 }
 
+message Inet4Address {
+	uint32 addr = 1; // in big endian
+}
+
+message Inet6Address {
+	uint64 hi = 1;
+	uint64 lo = 2;
+}
+
+message Address {
+	oneof address {
+		Inet4Address inet4 = 1;
+		Inet6Address inet6 = 2;
+	}
+}
+
+message VirtualServerAddress {
+	SocketType type = 1;
+	Address address = 2;
+	uint32 port = 3;
+}
+
+enum BalancingAlgorithm {
+	ROUND_ROBIN = 0;
+	RANDOM = 1;
+	LEAST_CONN = 2;
+}
+
+message VirtualServerConfig {
+	BalancingAlgorithm algorithm = 1;
+}
+
+message MemberAddress {
+	Address address = 1;
+	uint32 port = 2;
+}
+
+message MemberConfig {
+	float weight = 1;
+}
+
+// Virtual Server Manipulation API
+
+message CreateVirtualServerRequest {
+	VirtualServerAddress address = 1;
+	VirtualServerConfig config = 2;
+}
+
+message UpdateVirtualServerRequest {
+	VirtualServerAddress address = 1;
+	VirtualServerConfig config = 2;
+}
+
+message DeleteVirtualServerRequest {
+	VirtualServerAddress address = 1;
+}
+
+// Member Manipulation API
+
+message AddMemberRequest {
+	VirtualServerAddress server = 1;
+	MemberAddress member = 2;
+	MemberConfig config = 3;
+}
+
+message RemoveMemberRequest {
+	VirtualServerAddress server = 1;
+	MemberAddress member = 2;
+}
+
+message ChangeMemberRequest {
+	VirtualServerAddress server = 1;
+	MemberAddress member = 2;
+	MemberConfig config = 3;
+}
