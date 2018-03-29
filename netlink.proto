@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package clb;
+
 enum SocketType {
 	SOCK_STREAM = 0;
 	SOCK_DGRAM = 1;
@@ -83,6 +85,7 @@ message Status {
 }
 
 service Clb {
+	// The order matters. Do NOT re-order or remove method.
 	rpc CreateVirtualServer(CreateVirtualServerRequest) returns (Status);
 	rpc UpdateVirtualServer(UpdateVirtualServerRequest) returns (Status);
 	rpc DeleteVirtualServer(DeleteVirtualServerRequest) returns (Status);

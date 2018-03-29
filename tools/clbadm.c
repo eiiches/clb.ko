@@ -3,6 +3,24 @@
 #include <netlink/genl/ctrl.h>
 #include <netlink/errno.h>
 #include <clb/netlink.h>
+#include "netlink.pb-c.h"
+
+
+void invoke(ProtobufCService *service,
+            unsigned method_index,
+            const ProtobufCMessage *input,
+            ProtobufCClosure closure,
+            void *closure_data) {
+    fprintf(stderr, "invoked: %d\n", method_index);
+}
+
+
+static ProtobufCService client = {
+    &clb__clb__descriptor,
+    invoke,
+    NULL,
+};
+
 
 int
 main(int argc, char **argv)
@@ -25,6 +43,9 @@ main(int argc, char **argv)
     //     .cmd = 0, // CLB_NETLINK_COMMAND_CREATE_VS
     //     .version = 0x01,
     // };
+
+    Clb__CreateVirtualServerRequest request;
+    clb__clb__create_virtual_server(&client, &request, NULL, NULL);
 
 // #define CLB_NETLINK_VERSION 0x01
 // #define CLB_NETLINK_COMMAND_CREATE_VS 0
