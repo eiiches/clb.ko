@@ -2,11 +2,14 @@
 #define _NETNS_H_
 
 
+#include <linux/init.h>
+
+
 struct net;
 
 struct clb_t;
 
-extern void clb_module_netns_init(void);
+extern int __init clb_module_netns_init(void);
 
 extern void clb_module_netns_exit(void);
 

@@ -49,9 +49,9 @@ static struct pernet_operations clb_net_ops = {
 };
 
 
-void clb_module_netns_init(void) {
+int __init clb_module_netns_init(void) {
     // Per netns init/exit handlers. Also invoked for init_net.
-    register_pernet_subsys(&clb_net_ops);
+    return register_pernet_subsys(&clb_net_ops);
 }
 
 

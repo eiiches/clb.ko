@@ -16,14 +16,21 @@ static int __init clb_module_init(void)
     clb_module_test();
 
     int err;
-    clb_module_netns_init();
+    err = clb_module_netns_init();
+    if (err)
+        goto fail;
     err = clb_module_syscall_init();
     if (err)
         goto fail_syscall_init;
-    clb_module_netlink_init();
+    err = clb_module_netlink_init();
+    if (err)
+        goto fail_netlink_init;
     return 0;
+fail_netlink_init:
+    clb_module_syscall_exit();
 fail_syscall_init:
     clb_module_netns_exit();
+fail:
     return err;
 }
 
