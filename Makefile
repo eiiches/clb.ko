@@ -18,7 +18,7 @@ connect_lb-objs := \
 	sockaddr.o \
 	$(end-of-list)
 
-ccflags-y := -DDEBUG -std=gnu99 -Wno-declaration-after-statement -I$(PWD)/include
+ccflags-y := -DDEBUG -std=gnu99 -Wno-declaration-after-statement -I$(src)/include
 
 BUILD_DIR := /lib/modules/`uname -r`/build
 
