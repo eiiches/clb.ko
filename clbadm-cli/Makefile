@@ -1,6 +1,6 @@
 packages := libnl-genl-3.0
 
-CFLAGS := $(shell pkg-config --cflags $(packages))
+CFLAGS := $(shell pkg-config --cflags $(packages)) -I../include/uapi
 LDFLAGS := $(shell pkg-config --libs $(packages))
 
 clbadm: main.o

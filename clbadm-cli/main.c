@@ -2,6 +2,7 @@
 #include <netlink/genl/genl.h>
 #include <netlink/genl/ctrl.h>
 #include <netlink/errno.h>
+#include <clb/netlink.h>
 
 int
 main(int argc, char **argv)
@@ -25,8 +26,8 @@ main(int argc, char **argv)
     //     .version = 0x01,
     // };
 
-#define CLB_NETLINK_VERSION 0x01
-#define CLB_NETLINK_COMMAND_CREATE_VS 0
+// #define CLB_NETLINK_VERSION 0x01
+// #define CLB_NETLINK_COMMAND_CREATE_VS 0
     struct nl_msg *msg = nlmsg_alloc();
     void *user_hdr = genlmsg_put(msg, NL_AUTO_PID, NL_AUTO_SEQ, family, 0, NLM_F_REQUEST, CLB_NETLINK_COMMAND_CREATE_VS, CLB_NETLINK_VERSION);
     if (!user_hdr) {
