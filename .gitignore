@@ -8,3 +8,5 @@
 /modules.order
 /Module.symvers
 /.cache.mk
+/netlink.pb-c.c
+/netlink.pb-c.h

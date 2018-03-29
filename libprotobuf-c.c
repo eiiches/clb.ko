@@ -1,7 +1,4 @@
 #include "libprotobuf-c.h"
-static inline void assert(int cond) {
-    // no assert
-}
 static inline void *malloc(unsigned long size) {
     return kzalloc(size, GFP_KERNEL);
 }

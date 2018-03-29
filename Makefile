@@ -17,6 +17,7 @@ connect_lb-objs := \
 	module-test.o \
 	sockaddr.o \
 	libprotobuf-c.o \
+	netlink.pb-c.o \
 	$(end-of-list)
 
 ccflags-y := -DDEBUG -std=gnu99 -Wno-declaration-after-statement -I$(src)/include -I$(src)/include/std-empty
@@ -38,6 +39,10 @@ modules_install:
 .PHONY: help
 help:
 	$(MAKE) -C $(BUILD_DIR) M=$(PWD) help
+
+netlink.pb-c.c netlink.pb-c.h: netlink.proto
+	protoc --c_out=. netlink.proto
+	sed -i 's:<protobuf-c/protobuf-c.h>:"libprotobuf-c.h":g' netlink.pb-c.{c,h}
 
 .PHONY: insmod
 insmod: modules
