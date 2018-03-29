@@ -86,9 +86,7 @@ asmlinkage long clb_connect(int fd, struct sockaddr __user *uservaddr, int addrl
         goto connect;
     }
 
-#ifdef CONFIG_NET_NS
-    pr_info("connect(%d): sock->sk->sk_net = %px\n", fd, sock->sk->sk_net.net);
-#endif
+    pr_info("connect(%d): sock->sk->sk_net = %px\n", fd, sock_net(sock->sk));
 
 connect:
     err = sock->ops->connect(sock, (struct sockaddr *) &address, addrlen, sock->file->f_flags);

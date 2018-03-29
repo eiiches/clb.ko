@@ -22,8 +22,8 @@ static int __net_init clb_net_init(struct net *netns) {
     struct clb_t *clb = clb_new(netns);
     if (!clb)
         return -ENOMEM;
-
     hash_add(netns_clbs, &clb->hlist, (unsigned long) netns);
+    clb_start_netlink_server(clb);
     return 0;
 }
 
@@ -37,6 +37,7 @@ static void __net_exit clb_net_exit(struct net *net) {
         pr_warn("clb_net_exit: could not find clb entry for netns");
         return;
     }
+    clb_stop_netlink_server(clb);
     hash_del(&clb->hlist);
     clb_destroy(clb);
 }

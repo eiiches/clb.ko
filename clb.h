@@ -18,12 +18,15 @@
 
 struct clb_t;
 
+#define NETLINK_CLB 78
+
 
 #ifdef CLB_PRIVATE
 
 
 struct clb_t {
-    const struct net *netns; // network namespace
+    struct net *netns; // network namespace
+    struct sock *netlink_sock;
 
 #define CLB_VIRTUAL_SERVER_HASH_BITS (7)
     DECLARE_HASHTABLE(virtual_servers, CLB_VIRTUAL_SERVER_HASH_BITS);
@@ -33,7 +36,7 @@ struct clb_t {
 };
 
 
-extern struct clb_t *clb_new(const struct net *netns);
+extern struct clb_t *clb_new(struct net *netns);
 
 extern void clb_destroy(struct clb_t *clb);
 
@@ -44,6 +47,10 @@ extern struct clb_virtual_server_t *clb_find_virtual_server_by_address_and_hash(
 extern int clb_register_virtual_server(struct clb_t *clb, struct clb_virtual_server_t *vs);
 
 extern int clb_unregister_virtual_server(struct clb_t *clb, struct clb_virtual_server_t *vs);
+
+extern int clb_start_netlink_server(struct clb_t *clb);
+
+extern void clb_stop_netlink_server(struct clb_t *clb);
 
 
 #endif /* CLB_PRIVATE */
