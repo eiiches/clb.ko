@@ -2,7 +2,7 @@
 
 
 #include <net/net_namespace.h>
-#include <uapi/linux/in.h>
+#include <linux/in.h>
 
 #define CLB_PRIVATE
 #include "clb-api.h"

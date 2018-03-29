@@ -12,8 +12,8 @@
 #include <linux/net.h>
 #include <net/sock.h>
 #include <linux/file.h>
-#include <uapi/linux/in.h>
-#include <uapi/linux/in6.h>
+#include <linux/in.h>
+#include <linux/in6.h>
 
 #include "module-syscall-connect.h"
 #include "module-syscall.h"

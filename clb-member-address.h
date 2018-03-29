@@ -3,8 +3,8 @@
 
 
 #include <linux/socket.h> // struct sockaddr_storage;
-#include <uapi/linux/in.h> // struct sockaddr_in;
-#include <uapi/linux/in6.h> // struct sockaddr_in6;
+#include <linux/in.h> // struct sockaddr_in;
+#include <linux/in6.h> // struct sockaddr_in6;
 
 
 struct clb_member_address_t {
