@@ -3,12 +3,13 @@
 
 #include <linux/cache.h> // __ro_after_init;
 #include <net/genetlink.h> // struct genl_family;
+#include <net/sock.h> // sock_net;
 
 #include "module-netlink.h"
 
 
 static int clb_netlink_cmd_create_vs(struct sk_buff *skb, struct genl_info *info) {
-    pr_info("clb_netlink_cmd_create_vs");
+    pr_info("clb_netlink_cmd_create_vs(net = %px)\n", sock_net(skb->sk));
     return 0;
 }
 

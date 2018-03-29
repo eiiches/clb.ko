@@ -19,7 +19,7 @@ struct clb_t *clb_new(struct net *netns)
     clb->netns = netns;
     hash_init(clb->virtual_servers);
 out:
-    pr_debug("clb_new(...) => %px\n", clb);
+    pr_debug("clb_new(%px) => %px\n", netns, clb);
     return clb;
 }
 
