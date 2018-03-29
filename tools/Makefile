@@ -17,4 +17,4 @@ all: $(tools)
 .SECONDEXPANSION:
 .PHONY: clean
 clean:
-	$(RM) $(tools) $(foreach x, $(tools:=-objs), $($(x)))
+	$(RM) $(tools) $(foreach x, $(tools), $($(x)-objs))
