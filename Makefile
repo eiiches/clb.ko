@@ -7,7 +7,6 @@ connect_lb-objs := \
 	clb-api.o \
 	clb-member-address.o \
 	clb-member.o \
-	clb-netlink.o \
 	clb-virtual-server.o \
 	clb-virtual-server-address.o \
 	module.o \

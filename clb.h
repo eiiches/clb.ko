@@ -48,10 +48,6 @@ extern int clb_register_virtual_server(struct clb_t *clb, struct clb_virtual_ser
 
 extern int clb_unregister_virtual_server(struct clb_t *clb, struct clb_virtual_server_t *vs);
 
-extern int clb_start_netlink_server(struct clb_t *clb);
-
-extern void clb_stop_netlink_server(struct clb_t *clb);
-
 
 #endif /* CLB_PRIVATE */
 

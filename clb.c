@@ -9,7 +9,6 @@
 
 #define CLB_PRIVATE
 #include "clb.h"
-#include "clb-netlink.h"
 
 
 struct clb_t *clb_new(struct net *netns)
@@ -69,33 +68,4 @@ int clb_unregister_virtual_server(struct clb_t *clb, struct clb_virtual_server_t
 {
     hash_del(&vs->hlist);
     return 0;
-}
-
-
-int clb_start_netlink_server(struct clb_t *clb)
-{
-    pr_debug("clb_start_netlink_server(%px)\n", clb);
-    if (clb->netlink_sock)
-        return -EADDRINUSE;
-
-    struct netlink_kernel_cfg cfg = {
-        .input = clb_netlink_recv_msg,
-    };
-    clb->netlink_sock = netlink_kernel_create(clb->netns, NETLINK_CLB, &cfg);
-    if (!clb->netlink_sock) {
-        pr_warn("failed to create netlink socket");
-    }
-    return 0;
-}
-
-
-void clb_stop_netlink_server(struct clb_t *clb)
-{
-    pr_debug("clb_stop_netlink_server(%px)\n", clb);
-    if (!clb->netlink_sock) {
-        pr_warn("netlink server is not started");
-        return;
-    }
-    netlink_kernel_release(clb->netlink_sock);
-    clb->netlink_sock = NULL;
 }
