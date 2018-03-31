@@ -3,6 +3,7 @@
 #include <netlink/genl/ctrl.h>
 #include <netlink/errno.h>
 #include <clb/netlink.h>
+#include <errno.h>
 #include "netlink.pb-c.h"
 
 
@@ -17,21 +18,44 @@ struct context_t {
     ProtobufCClosure closure;
     void *closure_data;
     int method_index;
+    struct clb_client_t *client;
 };
 
 
+// static void error_response_handler(struct sockaddr_nl *nla, struct nlmsgerr *nlerr, void *arg) {
+//     if (nlerr) {
+//         nl_perror(nlerr->error, "error_response_handler");
+//     } else {
+//         fprintf(stderr, "error_response_handler (null)\n");
+//     }
+// }
+
+
 static void response_handler(struct nl_msg *msg, struct context_t *context) {
+    fprintf(stderr, "response_handler\n");
     struct nlmsghdr *nlhdr = nlmsg_hdr(msg);
-    struct genlmsghdr *genlhdr = genlmsg_hdr(nlhdr);
 
-    const ProtobufCMessageDescriptor *output_type = clb__clb__descriptor.methods[context->method_index].output;
+    if (nlhdr->nlmsg_type == NLMSG_ERROR) {
+        struct nlmsgerr *err = nlmsg_data(nlhdr);
+        fprintf(stderr, "  nlhdr->nlmsg_type == NLMSG_ERROR (code = %d, %s)\n", -err->error, strerror(-err->error));
+        return;
+    }
 
-    const void *payload_ptr = genlmsg_user_data(genlhdr, 0);
-    const int payload_size = genlmsg_user_datalen(genlhdr, 0);
+    if (nlhdr->nlmsg_type == context->client->family) {
+        struct genlmsghdr *genlhdr = genlmsg_hdr(nlhdr);
 
-    ProtobufCMessage *response = protobuf_c_message_unpack(output_type, NULL, payload_size, payload_ptr);
-    context->closure(response, context->closure_data);
-    protobuf_c_message_free_unpacked(response, NULL);
+        const ProtobufCMessageDescriptor *output_type = clb__clb__descriptor.methods[context->method_index].output;
+
+        const void *payload_ptr = genlmsg_user_data(genlhdr, 0);
+        const int payload_size = genlmsg_user_datalen(genlhdr, 0);
+
+        ProtobufCMessage *response = protobuf_c_message_unpack(output_type, NULL, payload_size, payload_ptr);
+        context->closure(response, context->closure_data);
+        protobuf_c_message_free_unpacked(response, NULL);
+        return;
+    }
+
+    fprintf(stderr, "  unknown nlmsg_type received: %d\n", nlhdr->nlmsg_type);
 }
 
 
@@ -67,8 +91,10 @@ static void invoke(ProtobufCService *service,
     context.closure = closure;
     context.closure_data = closure_data;
     context.method_index = method_index;
+    context.client = client;
     struct nl_cb *cb = nl_cb_alloc(NL_CB_CUSTOM);
     nl_cb_set(cb, NL_CB_MSG_IN, NL_CB_CUSTOM, (nl_recvmsg_msg_cb_t) response_handler, &context);
+    // nl_cb_err(cb, NL_CB_CUSTOM, (nl_recvmsg_err_cb_t) error_response_handler, &context);
     int err = nl_recvmsgs(client->sock, cb);
     if (err) {
         nl_perror(err, "nl_recvmsgs");
