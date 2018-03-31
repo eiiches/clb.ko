@@ -18,7 +18,7 @@ static void invoke(ProtobufCService *service,
             const ProtobufCMessage *input,
             ProtobufCClosure closure,
             void *closure_data) {
-    fprintf(stderr, "invoked: %d\n", method_index);
+    fprintf(stderr, "sending: %d\n", method_index);
     struct clb_client_t *client = (struct clb_client_t *) service;
 
     struct nl_msg *msg = nlmsg_alloc();
@@ -39,6 +39,11 @@ static void invoke(ProtobufCService *service,
         nl_perror(-len, "nl_send_auto");
         goto errout_nlmsg_free;
     }
+
+    fprintf(stderr, "receiving: %d\n", method_index);
+    nl_recvmsgs_default(client->sock);
+
+
 errout_nlmsg_free:
     nlmsg_free(msg);
 }
@@ -66,6 +71,7 @@ int clb_client_connect(struct clb_client_t *client) {
     client->family = genl_ctrl_resolve(client->sock, "CLB");
     if (client->family < 0)
         return -client->family;
+    nl_socket_disable_auto_ack(client->sock);
     return 0;
 }
 

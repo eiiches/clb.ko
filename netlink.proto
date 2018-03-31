@@ -92,4 +92,5 @@ service Clb {
 	rpc AddMember(AddMemberRequest) returns (Status);
 	rpc ChangeMember(ChangeMemberRequest) returns (Status);
 	rpc RemoveMember(RemoveMemberRequest) returns (Status);
+	// rpc ListVirtualServers(VirtualServerConfig) returns (stream VirtualServerConfig);
 }
