@@ -14,9 +14,16 @@ main(int argc, char **argv)
         goto finally;
     }
 
-    clb_client_create_virtual_server(client);
-    clb_client_update_virtual_server(client);
-    clb_client_delete_virtual_server(client);
+    int err;
+
+    err = clb_client_create_virtual_server(client);
+    fprintf(stderr, "clb_client_create_virtual_server(...) #=> %d\n", err);
+
+    err = clb_client_update_virtual_server(client);
+    fprintf(stderr, "clb_client_update_virtual_server(...) #=> %d\n", err);
+
+    err = clb_client_delete_virtual_server(client);
+    fprintf(stderr, "clb_client_delete_virtual_server(...) #=> %d\n", err);
 
 finally:
     clb_client_destroy(client);

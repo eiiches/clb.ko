@@ -13,12 +13,34 @@ struct clb_client_t {
 };
 
 
+struct context_t {
+    ProtobufCClosure closure;
+    void *closure_data;
+    int method_index;
+};
+
+
+static void response_handler(struct nl_msg *msg, struct context_t *context) {
+    struct nlmsghdr *nlhdr = nlmsg_hdr(msg);
+    struct genlmsghdr *genlhdr = genlmsg_hdr(nlhdr);
+
+    const ProtobufCMessageDescriptor *output_type = clb__clb__descriptor.methods[context->method_index].output;
+
+    const void *payload_ptr = genlmsg_user_data(genlhdr, 0);
+    const int payload_size = genlmsg_user_datalen(genlhdr, 0);
+
+    ProtobufCMessage *response = protobuf_c_message_unpack(output_type, NULL, payload_size, payload_ptr);
+    context->closure(response, context->closure_data);
+    protobuf_c_message_free_unpacked(response, NULL);
+}
+
+
 static void invoke(ProtobufCService *service,
             unsigned method_index,
             const ProtobufCMessage *input,
             ProtobufCClosure closure,
             void *closure_data) {
-    fprintf(stderr, "sending: %d\n", method_index);
+    // fprintf(stderr, "sending: %d\n", method_index);
     struct clb_client_t *client = (struct clb_client_t *) service;
 
     struct nl_msg *msg = nlmsg_alloc();
@@ -40,8 +62,21 @@ static void invoke(ProtobufCService *service,
         goto errout_nlmsg_free;
     }
 
-    fprintf(stderr, "receiving: %d\n", method_index);
-    nl_recvmsgs_default(client->sock);
+    // fprintf(stderr, "receiving: %d\n", method_index);
+    struct context_t context;
+    context.closure = closure;
+    context.closure_data = closure_data;
+    context.method_index = method_index;
+    struct nl_cb *cb = nl_cb_alloc(NL_CB_CUSTOM);
+    nl_cb_set(cb, NL_CB_MSG_IN, NL_CB_CUSTOM, (nl_recvmsg_msg_cb_t) response_handler, &context);
+    int err = nl_recvmsgs(client->sock, cb);
+    if (err) {
+        nl_perror(err, "nl_recvmsgs");
+        goto errout_cb_free;
+    }
+
+errout_cb_free:
+    nl_cb_put(cb); // free()
 
 
 errout_nlmsg_free:
@@ -82,22 +117,32 @@ void clb_client_destroy(struct clb_client_t *client) {
 }
 
 
-void clb_client_create_virtual_server(struct clb_client_t *client) {
+static void status_handler(const Clb__Status *status, void *code) {
+    *((int *) code) = status->code;
+}
+
+int clb_client_create_virtual_server(struct clb_client_t *client) {
     Clb__VirtualServerConfig config = CLB__VIRTUAL_SERVER_CONFIG__INIT;
     config.algorithm = CLB__BALANCING_ALGORITHM__LEAST_CONN;
     Clb__CreateVirtualServerRequest request = CLB__CREATE_VIRTUAL_SERVER_REQUEST__INIT;
     request.config = &config;
-    clb__clb__create_virtual_server((ProtobufCService *) client, &request, NULL, NULL);
+    int code = -1;
+    clb__clb__create_virtual_server((ProtobufCService *) client, &request, status_handler, &code);
+    return code;
 }
 
 
-void clb_client_update_virtual_server(struct clb_client_t *client) {
+int clb_client_update_virtual_server(struct clb_client_t *client) {
     Clb__UpdateVirtualServerRequest request = CLB__UPDATE_VIRTUAL_SERVER_REQUEST__INIT;
-    clb__clb__update_virtual_server((ProtobufCService *) client, &request, NULL, NULL);
+    int code = -1;
+    clb__clb__update_virtual_server((ProtobufCService *) client, &request, status_handler, &code);
+    return code;
 }
 
 
-void clb_client_delete_virtual_server(struct clb_client_t *client) {
+int clb_client_delete_virtual_server(struct clb_client_t *client) {
     Clb__DeleteVirtualServerRequest request = CLB__DELETE_VIRTUAL_SERVER_REQUEST__INIT;
-    clb__clb__delete_virtual_server((ProtobufCService *) client, &request, NULL, NULL);
+    int code = -1;
+    clb__clb__delete_virtual_server((ProtobufCService *) client, &request, status_handler, &code);
+    return code;
 }
