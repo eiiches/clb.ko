@@ -1,10 +1,10 @@
 packages := libnl-genl-3.0 libprotobuf-c
 
-CFLAGS := $(shell pkg-config --cflags $(packages)) -I../include/uapi
-LDFLAGS := $(shell pkg-config --libs $(packages))
+CFLAGS := $(shell pkg-config --cflags $(packages)) -I../include/uapi  -g -ggdb
+LDFLAGS := $(shell pkg-config --libs $(packages)) -g -ggdb
 
 tools := clbadm
-clbadm-objs := clbadm.o netlink.pb-c.o
+clbadm-objs := clbadm.o netlink.pb-c.o clb-client.o
 
 all: netlink.pb-c.h $(tools)
 

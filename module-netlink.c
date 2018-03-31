@@ -7,30 +7,10 @@
 
 #include <uapi/clb/netlink.h>
 #include "module-netlink.h"
-
 #include "netlink.pb-c.h"
 
 
-// static int clb_netlink_cmd_create_vs(struct sk_buff *skb, struct genl_info *info) {
-//     pr_info("clb_netlink_cmd_create_vs(net = %px)\n", sock_net(skb->sk));
-//     return 0;
-// }
-
-
-// static const struct nla_policy clb_netlink_cmd_policy[NUM_CLB_NETLINK_COMMAND_ATTRS] = {
-//     [CLB_NETLINK_COMMAND_ATTR_VS] = { .type = NLA_NESTED },
-// };
-
-
 static struct genl_ops *clb_netlink_ops;
-
-//     {
-//         .cmd = CLB_NETLINK_COMMAND_CREATE_VS,
-//         .flags = GENL_ADMIN_PERM,
-//         .doit = clb_netlink_cmd_create_vs,
-//     }
-// };
-
 
 static struct genl_family clb_netlink_family __ro_after_init = {
     .hdrsize = 0,
@@ -39,8 +19,8 @@ static struct genl_family clb_netlink_family __ro_after_init = {
     .maxattr = 0,
     .netnsok = true,
     .module = THIS_MODULE,
-    .ops = NULL, // set by __init
-    .n_ops = 0, // set by __init
+    .ops = NULL, // set later in __init
+    .n_ops = 0, // set later in __init
 };
 
 
@@ -48,7 +28,8 @@ void clb_service_impl_create_virtual_server(Clb__Clb_Service *service,
                                             const Clb__CreateVirtualServerRequest *input,
                                             Clb__Status_Closure closure,
                                             void *closure_data) {
-    pr_info("clb_service_impl_create_virtual_server\n");
+    pr_info("clb_service_impl_create_virtual_server(config = %px)\n", input->config);
+    pr_info("clb_service_impl_create_virtual_server(config->algo = %d)\n", input->config->algorithm);
 }
 
 void clb_service_impl_update_virtual_server(Clb__Clb_Service *service,
@@ -91,9 +72,15 @@ static Clb__Clb_Service clb_service_impl = CLB__CLB__INIT(clb_service_impl_);
 
 
 static int clb_netlink_command_handler(struct sk_buff *skb, struct genl_info *info) {
-    pr_info("clb_netlink_command_handler: netns = %px\n", sock_net(skb->sk));
-    int command = info->genlhdr->cmd;
-    clb_service_impl.base.invoke(&clb_service_impl.base, command, NULL, NULL, NULL);
+    pr_debug("clb_netlink_command_handler: netns = %px\n", genl_info_net(info));
+
+    const int method_index = info->genlhdr->cmd;
+    const ProtobufCMessageDescriptor *input_type = clb__clb__descriptor.methods[method_index].input;
+
+    ProtobufCMessage *payload = protobuf_c_message_unpack(input_type, NULL, genlmsg_len(info->genlhdr), genlmsg_data(info->genlhdr));
+    clb_service_impl.base.invoke(&clb_service_impl.base, method_index, payload, NULL, NULL);
+    protobuf_c_message_free_unpacked(payload, NULL);
+
     // clb_service_impl.base.invoke(&clb_service_impl.base, command, 
 	// 			   const ProtobufCMessage *input,
 	// 			   ProtobufCClosure closure,
