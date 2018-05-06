@@ -83,6 +83,20 @@ void clb_service_impl_remove_member(Clb__Clb_Service *service,
     pr_info("clb_service_impl_remove_member\n");
 }
 
+void clb_service_impl_list_virtual_servers(Clb__Clb_Service *service,
+                                    const Clb__ListVirtualServersRequest *input,
+                                    Clb__VirtualServer_Closure closure,
+                                    void *closure_data) {
+    pr_info("clb_service_impl_list_virtual_servers\n");
+}
+
+void clb_service_impl_get_virtual_server(Clb__Clb_Service *service,
+                                  const Clb__GetVirtualServerRequest *input,
+                                  Clb__VirtualServer_Closure closure,
+                                  void *closure_data) {
+    pr_info("clb_service_impl_get_virtual_servers\n");
+}
+
 
 static Clb__Clb_Service clb_service_impl = CLB__CLB__INIT(clb_service_impl_);
 
@@ -132,8 +146,13 @@ static void clb_netlink_command_response_handler(const ProtobufCMessage *output,
     // skb is ref-counted, so no need to (actually, must not) free() here
 }
 
-static int clb_netlink_command_handler(struct sk_buff *skb, struct genl_info *info) {
-    pr_debug("clb_netlink_command_handler: netns = %px\n", genl_info_net(info));
+static int clb_netlink_command_dumpit(struct sk_buff *skb, struct netlink_callback *cb) {
+    pr_debug("clb_netlink_command_dumpit: netns = %px\n", sock_net(skb->sk));
+    return 0;
+}
+
+static int clb_netlink_command_doit(struct sk_buff *skb, struct genl_info *info) {
+    pr_debug("clb_netlink_command_doit: netns = %px\n", genl_info_net(info));
 
     const int method_index = info->genlhdr->cmd;
     const ProtobufCMessageDescriptor *input_type = clb__clb__descriptor.methods[method_index].input;
@@ -162,7 +181,11 @@ int __init clb_module_netlink_init(void) {
     for (int i = 0; i < clb__clb__descriptor.n_methods; ++i) {
         clb_netlink_ops[i].cmd = i;
         clb_netlink_ops[i].flags = GENL_ADMIN_PERM;
-        clb_netlink_ops[i].doit = clb_netlink_command_handler;
+        if (strcmp(clb__clb__descriptor.methods[i].name, "ListVirtualServers") == 0) {
+            clb_netlink_ops[i].dumpit = clb_netlink_command_dumpit;
+        } else {
+            clb_netlink_ops[i].doit = clb_netlink_command_doit;
+        }
     }
     clb_netlink_family.ops = clb_netlink_ops;
     clb_netlink_family.n_ops = clb__clb__descriptor.n_methods;

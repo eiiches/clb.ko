@@ -172,3 +172,7 @@ int clb_client_delete_virtual_server(struct clb_client_t *client) {
     clb__clb__delete_virtual_server((ProtobufCService *) client, &request, status_handler, &code);
     return code;
 }
+
+int clb_client_list_virtual_servers(struct clb_client_t *client) {
+
+}

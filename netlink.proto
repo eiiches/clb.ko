@@ -84,6 +84,24 @@ message Status {
 	uint32 code = 1;
 }
 
+message ListVirtualServersRequest {
+}
+
+message Member {
+	MemberAddress address = 1;
+	MemberConfig config = 2;
+}
+
+message VirtualServer {
+	VirtualServerAddress address = 1;
+	VirtualServerConfig config = 2;
+	repeated Member members = 3;
+}
+
+message GetVirtualServerRequest {
+	VirtualServerAddress address = 1;
+}
+
 service Clb {
 	// The order matters. Do NOT re-order or remove method.
 	rpc CreateVirtualServer(CreateVirtualServerRequest) returns (Status);
@@ -92,5 +110,10 @@ service Clb {
 	rpc AddMember(AddMemberRequest) returns (Status);
 	rpc ChangeMember(ChangeMemberRequest) returns (Status);
 	rpc RemoveMember(RemoveMemberRequest) returns (Status);
-	// rpc ListVirtualServers(VirtualServerConfig) returns (stream VirtualServerConfig);
+
+	// Returns -ENOENT if not exists. NLM_F_DUMP must be set in requests.
+	rpc ListVirtualServers(ListVirtualServersRequest) returns (stream VirtualServer);
+
+	// Returns -ENOENT if not exists
+	rpc GetVirtualServer(GetVirtualServerRequest) returns (VirtualServer);
 }
