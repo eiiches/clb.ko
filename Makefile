@@ -1,9 +1,9 @@
 end-of-list :=
 
-obj-m += connect_lb.o
+obj-m += clb.o
 
-connect_lb-objs := \
-	clb.o \
+clb-objs := \
+	clb-load-balancer.o \
 	clb-api.o \
 	clb-member-address.o \
 	clb-member.o \
@@ -46,10 +46,10 @@ netlink.pb-c.c netlink.pb-c.h: netlink.proto
 
 .PHONY: insmod
 insmod: modules
-	insmod connect_lb.ko
+	insmod clb.ko
 
 .PHONY: rmmod
 rmmod:
-	rmmod connect_lb
+	rmmod clb
 
 # reference: https://www.kernel.org/doc/Documentation/kbuild/modules.txt

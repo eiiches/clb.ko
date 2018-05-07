@@ -8,7 +8,7 @@
 #include <linux/netlink.h> // kernel_netlink_create; kernel_netlink_release
 
 #define CLB_PRIVATE
-#include "clb.h"
+#include "clb-load-balancer.h"
 
 
 struct clb_t *clb_new(struct net *netns)

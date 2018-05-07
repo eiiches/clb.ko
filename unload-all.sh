@@ -11,7 +11,7 @@ for table in nat filter mangle raw; do
 	sudo modprobe -r iptable_$table
 done
 
-sudo rmmod connect_lb
+sudo rmmod clb
 sudo modprobe -r ip_vs_rr
 sudo modprobe -r ip_vs
 sudo modprobe -r ipt_MASQUERADE

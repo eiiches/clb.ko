@@ -1,4 +1,4 @@
-# connect_lb.ko
+# clb.ko
 
 Load-balance connect(2)ions transparently to the application, with zero overhead after establishment.
 

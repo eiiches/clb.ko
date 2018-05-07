@@ -2,7 +2,7 @@
 #define _CLB_API_H_
 
 
-#include "clb.h"
+#include "clb-load-balancer.h"
 
 
 extern int clb_create_virtual_server(struct clb_t *clb, struct clb_virtual_server_address_t *address, struct clb_virtual_server_config_t *config);

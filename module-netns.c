@@ -7,7 +7,7 @@
 #include <net/net_namespace.h>
 
 #define CLB_PRIVATE
-#include "clb.h"
+#include "clb-load-balancer.h"
 
 
 // TODO: add proper locking to netns_clbs
