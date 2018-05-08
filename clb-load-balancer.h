@@ -48,6 +48,8 @@ extern int clb_register_virtual_server(struct clb_t *clb, struct clb_virtual_ser
 
 extern int clb_unregister_virtual_server(struct clb_t *clb, struct clb_virtual_server_t *vs);
 
+extern int clb_load_balancer_do_balance(struct clb_t *clb, int type, struct sockaddr_storage *ss);
+
 
 #endif /* CLB_PRIVATE */
 

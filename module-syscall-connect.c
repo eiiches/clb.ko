@@ -10,22 +10,10 @@
 #include <linux/in.h>
 #include <linux/in6.h>
 
+#define CLB_PRIVATE
+#include "clb-load-balancer.h"
 #include "module-syscall-connect.h"
-
-
-static void clb_connect_do_balance_v4(struct sockaddr_in *addr)
-{
-    pr_info("do_balance_v4: ip = %pISpc\n", addr);
-    addr->sin_port = htons(6379);
-    addr->sin_addr.s_addr = (1 << 24) + (111 << 16) + (168 << 8) + 192;
-    pr_info("do_balance_v4: ip = %pISpc (after)\n", addr);
-}
-
-
-static void clb_connect_do_balance_v6(struct sockaddr_in6 *addr)
-{
-    pr_info("do_balance_v6: ip = %pISpc\n", addr);
-}
+#include "module-netns.h"
 
 
 #ifdef CONFIG_SECURITY_NETWORK
@@ -77,11 +65,19 @@ asmlinkage long clb_connect(int fd, struct sockaddr __user *uservaddr, int addrl
     if (sock->type != SOCK_STREAM && sock->type != SOCK_DGRAM)
         goto connect;
 
+    struct clb_t *clb = clb_module_find(sock_net(sock->sk));
+    if (unlikely(!clb)) {
+        pr_warn("connect(%d): load balancer not found for netns = %px\n", fd, sock_net(sock->sk));
+        goto connect;
+    }
+
     // Rewrite address. If the socket is neither IPv4 or IPv6, keep the original address.
-    if (sock->ops->family == AF_INET && address.ss_family == AF_INET) {
-        clb_connect_do_balance_v4((struct sockaddr_in *) &address);
-    } else if (sock->ops->family == AF_INET6 && address.ss_family == AF_INET6) {
-        clb_connect_do_balance_v6((struct sockaddr_in6 *) &address);
+    if ((sock->ops->family == AF_INET && address.ss_family == AF_INET)
+            || (sock->ops->family == AF_INET6 && address.ss_family == AF_INET6)) {
+        pr_info("do_balance_v4: ip = %pISpc\n", &address);
+        int err = clb_load_balancer_do_balance(clb, sock->type, &address);
+        // TODO: handle errors
+        pr_info("do_balance_v4: ip = %pISpc (after)\n", &address);
     } else {
         goto connect;
     }

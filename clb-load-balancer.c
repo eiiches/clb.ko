@@ -69,3 +69,41 @@ int clb_unregister_virtual_server(struct clb_t *clb, struct clb_virtual_server_t
     hash_del(&vs->hlist);
     return 0;
 }
+
+
+int clb_load_balancer_do_balance(struct clb_t *clb, int type, struct sockaddr_storage *ss)
+{
+    int ret = 0;
+
+    struct clb_virtual_server_address_t address;
+    address.addr = *ss;
+    address.type = type;
+
+    struct clb_virtual_server_t *vs = clb_find_virtual_server_by_address(clb, &address);
+    if (!vs) {
+        pr_info("no virtual server found for address %pISpc\n", ss);
+        goto ret;
+    }
+
+    unsigned long flags;
+    spin_lock_irqsave(&vs->next_rr_lock, flags);
+
+    struct clb_member_t *member = vs->next_rr;
+    if (!member) {
+        member = rb_entry_safe(rb_first_cached(&vs->members_in_order), struct clb_member_t, members_in_order_node);
+        if (!member) { // no members
+            pr_warn("no members for address %pISpc\n", ss);
+            ret = -ECONNRESET;
+            goto ret_unlock;
+        }
+    }
+    vs->next_rr = rb_entry_safe(rb_next(&member->members_in_order_node), struct clb_member_t, members_in_order_node);
+
+    *ss = member->address.addr;
+
+ret_unlock:
+    spin_unlock_irqrestore(&vs->next_rr_lock, flags);
+
+ret:
+    return ret;
+}

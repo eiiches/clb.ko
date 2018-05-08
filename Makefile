@@ -46,10 +46,10 @@ netlink.pb-c.c netlink.pb-c.h: netlink.proto
 
 .PHONY: insmod
 insmod: modules
-	insmod clb.ko
+	sudo insmod clb.ko
 
 .PHONY: rmmod
 rmmod:
-	rmmod clb
+	sudo rmmod clb
 
 # reference: https://www.kernel.org/doc/Documentation/kbuild/modules.txt

@@ -7,6 +7,7 @@
 
 #include <linux/rbtree.h>
 #include <linux/hashtable.h>
+#include <linux/spinlock.h>
 
 #include "clb-virtual-server-address.h"
 #include "clb-virtual-server-config.h"
@@ -24,6 +25,10 @@ struct clb_virtual_server_t {
 
     // Tree of members. The left-most node will be used next.
     struct rb_root_cached members_in_order;
+
+    // FIXME: for round robin
+    spinlock_t next_rr_lock;
+    struct clb_member_t *next_rr;
 };
 
 

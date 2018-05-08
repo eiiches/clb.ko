@@ -35,6 +35,9 @@ struct clb_virtual_server_t *clb_virtual_server_new(struct clb_virtual_server_ad
     vs->config = *config;
     hash_init(vs->members);
     vs->members_in_order = RB_ROOT_CACHED;
+    vs->next_rr = NULL;
+    spin_lock_init(&vs->next_rr_lock);
+
     INIT_HLIST_NODE(&vs->hlist);
 out:
     pr_debug("clb_virtual_server_new(...) => %px\n", vs);
